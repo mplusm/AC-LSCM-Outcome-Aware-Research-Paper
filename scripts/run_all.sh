@@ -17,10 +17,11 @@ CONFIGS=(
   configs/synthetic_chain.yaml
   configs/synthetic_fork.yaml
   configs/synthetic_collider.yaml
-  configs/synthetic_er_k5.yaml
   configs/synthetic_er_k10.yaml
   configs/synthetic_er_k20.yaml
 )
+# NOTE: synthetic_er_k5.yaml intentionally skipped — K=5 too small to test
+# structural advantage; results from K=10 and K=20 are sufficient.
 
 log "=== AC-LSCM Full Run ==="
 log "Results dir: $RESULTS_DIR"
