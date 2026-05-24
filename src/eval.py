@@ -22,14 +22,15 @@ def evaluate_model(model, data: dict, device: torch.device, batch_size: int = 25
     eps_t = torch.tensor(data["eps_t"], dtype=torch.float32)
     x_tp1_cf = torch.tensor(data["x_tp1_cf"], dtype=torch.float32)
     a_t_cf = torch.tensor(data["a_t_cf"], dtype=torch.float32)
+    z_tp1_cf = torch.tensor(data["z_tp1_cf"], dtype=torch.float32)
 
-    dataset = TensorDataset(x_t, a_t, x_tp1, eps_t, x_tp1_cf, a_t_cf)
+    dataset = TensorDataset(x_t, a_t, x_tp1, eps_t, x_tp1_cf, a_t_cf, z_tp1_cf)
     loader = DataLoader(dataset, batch_size=batch_size, shuffle=False)
 
     int_mses, cf_mses, abs_errors = [], [], []
 
     for batch in loader:
-        bx_t, ba_t, bx_tp1, beps_t, bx_tp1_cf, ba_t_cf = [b.to(device) for b in batch]
+        bx_t, ba_t, bx_tp1, beps_t, bx_tp1_cf, ba_t_cf, _ = [b.to(device) for b in batch]
 
         # 1. Interventional MSE
         out = model(bx_t, ba_t)

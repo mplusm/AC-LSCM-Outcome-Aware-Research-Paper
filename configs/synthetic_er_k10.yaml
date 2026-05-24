@@ -4,7 +4,7 @@ scm:
   K: 10
   seed: 0
   edge_prob: 0.3
-  n_train: 2000
+  n_train: 10000
   n_test: 500
 training:
   epochs: 200
@@ -15,6 +15,7 @@ training:
   beta_3: 0.5
   beta_4: 1.0
   checkpoint_every: 10
+  dag_curriculum_epochs: 50
   precision: fp32
 models:
   - aclscm

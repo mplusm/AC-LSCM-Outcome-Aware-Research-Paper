@@ -104,7 +104,7 @@ class SyntheticSCM:
         rng = np.random.RandomState(rng_seed if rng_seed is not None else self.seed + 1000)
 
         x_t_list, a_t_list, x_tp1_list = [], [], []
-        eps_t_list, x_tp1_cf_list, a_t_cf_list = [], [], []
+        eps_t_list, x_tp1_cf_list, a_t_cf_list, z_tp1_cf_list = [], [], [], []
 
         # Initialise first z from standard normal
         z = rng.randn(K).astype(np.float32) * 0.5
@@ -152,6 +152,7 @@ class SyntheticSCM:
             eps_t_list.append(eps)
             x_tp1_cf_list.append(x_tp1_cf)
             a_t_cf_list.append(a_cf)
+            z_tp1_cf_list.append(z_tp1_cf)
 
             # Advance state
             z = z_tp1
@@ -163,6 +164,7 @@ class SyntheticSCM:
             "eps_t": np.stack(eps_t_list),
             "x_tp1_cf": np.stack(x_tp1_cf_list),
             "a_t_cf": np.stack(a_t_cf_list),
+            "z_tp1_cf": np.stack(z_tp1_cf_list),  # ground-truth CF latent (no obs noise)
         }
 
     @property

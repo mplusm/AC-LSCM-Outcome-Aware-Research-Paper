@@ -49,7 +49,7 @@ def apply_overrides(cfg: dict, overrides: dict) -> dict:
 # ---------------------------------------------------------------------------
 
 def make_tensors(data: dict, device=None):
-    keys = ["x_t", "a_t", "x_tp1", "eps_t", "x_tp1_cf", "a_t_cf"]
+    keys = ["x_t", "a_t", "x_tp1", "eps_t", "x_tp1_cf", "a_t_cf", "z_tp1_cf"]
     tensors = [torch.tensor(data[k], dtype=torch.float32) for k in keys]
     return tensors
 
@@ -64,7 +64,7 @@ def make_loader(data: dict, batch_size: int, shuffle: bool) -> DataLoader:
 # One epoch
 # ---------------------------------------------------------------------------
 
-def train_epoch(model, loader, optimizer, device, cfg, model_cfg) -> dict:
+def train_epoch(model, loader, optimizer, device, cfg, model_cfg, epoch: int = 0) -> dict:
     model.train()
     K = model.K
     beta_1 = cfg["training"].get("beta_1", 1.0)
@@ -73,11 +73,15 @@ def train_epoch(model, loader, optimizer, device, cfg, model_cfg) -> dict:
     beta_4 = cfg["training"].get("beta_4", 1.0)
     acyclicity = model_cfg.get("acyclicity", "notears")
 
+    # DAG curriculum: ramp lambda2 from 0 → full over dag_curriculum_epochs
+    curriculum_epochs = cfg["training"].get("dag_curriculum_epochs", 0)
+    dag_lambda2_factor = min(1.0, (epoch + 1) / curriculum_epochs) if curriculum_epochs > 0 else 1.0
+
     totals = {"total": 0, "recon": 0, "transition": 0, "dag": 0, "contrastive": 0}
     n_batches = 0
 
     for batch in loader:
-        x_t, a_t, x_tp1, eps_t, x_tp1_cf, a_t_cf = [b.to(device) for b in batch]
+        x_t, a_t, x_tp1, eps_t, x_tp1_cf, a_t_cf, z_tp1_cf_gt = [b.to(device) for b in batch]
 
         optimizer.zero_grad()
         out = model(x_t, a_t)
@@ -92,11 +96,12 @@ def train_epoch(model, loader, optimizer, device, cfg, model_cfg) -> dict:
                 pass
 
         # Counterfactual latent predictions (ACLSCM only)
+        # Use ground-truth z_tp1_cf from SCM as supervision target (not encoded x_tp1_cf)
         z_tp1_cf_pred, z_tp1_cf_true, z_tp1_factual = None, None, None
         if isinstance(model, ACLSCM) and beta_4 > 0.0:
             _, z_cf_pred = model.counterfactual(x_t, a_t, x_tp1, a_t_cf)
             z_tp1_cf_pred = z_cf_pred
-            z_tp1_cf_true = model.encode_mean(x_tp1_cf)
+            z_tp1_cf_true = z_tp1_cf_gt  # ground-truth latent, no encoder noise
             z_tp1_factual = out["z_tp1_pred"]
 
         losses = composite_loss(
@@ -112,7 +117,7 @@ def train_epoch(model, loader, optimizer, device, cfg, model_cfg) -> dict:
             z_tp1_factual=z_tp1_factual,
             beta_1=beta_1,
             beta_2=beta_2,
-            beta_3=beta_3,
+            beta_3=beta_3 * dag_lambda2_factor,
             beta_4=beta_4,
             acyclicity=acyclicity,
         )
@@ -142,7 +147,7 @@ def val_epoch(model, loader, device, cfg, model_cfg) -> dict:
     n_batches = 0
 
     for batch in loader:
-        x_t, a_t, x_tp1, eps_t, x_tp1_cf, a_t_cf = [b.to(device) for b in batch]
+        x_t, a_t, x_tp1, eps_t, x_tp1_cf, a_t_cf, z_tp1_cf_gt = [b.to(device) for b in batch]
 
         out = model(x_t, a_t)
 
@@ -158,7 +163,7 @@ def val_epoch(model, loader, device, cfg, model_cfg) -> dict:
         if isinstance(model, ACLSCM) and beta_4 > 0.0:
             _, z_cf_pred = model.counterfactual(x_t, a_t, x_tp1, a_t_cf)
             z_tp1_cf_pred = z_cf_pred
-            z_tp1_cf_true = model.encode_mean(x_tp1_cf)
+            z_tp1_cf_true = z_tp1_cf_gt  # ground-truth latent
             z_tp1_factual = out["z_tp1_pred"]
 
         losses = composite_loss(
@@ -288,7 +293,7 @@ def train_model(
 
     for epoch in range(start_epoch, epochs):
         t0 = time.time()
-        train_losses = train_epoch(model, train_loader, optimizer, device, cfg, model_cfg)
+        train_losses = train_epoch(model, train_loader, optimizer, device, cfg, model_cfg, epoch=epoch)
         val_losses = val_epoch(model, val_loader, device, cfg, model_cfg)
 
         val_metric = val_losses["total"]
