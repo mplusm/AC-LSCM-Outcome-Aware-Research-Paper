@@ -4,6 +4,7 @@ import torch
 from torch.utils.data import DataLoader, TensorDataset
 
 from src.utils import compute_shd
+from src.models import ACLSCM
 
 
 @torch.no_grad()
@@ -42,7 +43,6 @@ def evaluate_model(model, data: dict, device: torch.device, batch_size: int = 25
         cf_mses.append(cf_mse)
 
         # 5. Abduction recovery error (AC-LSCM only)
-        from src.models import ACLSCM
         if isinstance(model, ACLSCM):
             z_tp1_true = model.encode_mean(bx_tp1)
             z_tp1_base = model.transition_base(model.encode_mean(bx_t), ba_t)
@@ -58,7 +58,6 @@ def evaluate_model(model, data: dict, device: torch.device, batch_size: int = 25
     }
 
     # 3. SHD and 4. DAG constraint (AC-LSCM only)
-    from src.models import ACLSCM
     if isinstance(model, ACLSCM):
         A_learned = model.get_adjacency(hard=True).cpu().numpy()
         # true_adjacency needs to be passed in via data

@@ -262,7 +262,6 @@ def train_model(
         model_cfg.update(model_cfg_overrides)
 
     if model_name == "aclscm":
-        from src.models import ACLSCM
         use_do = model_cfg.get("use_do_operator", True)
         acyclicity = model_cfg.get("acyclicity", "notears")
         model = ACLSCM(K=K, obs_dim=obs_dim, use_do_operator=use_do, acyclicity=acyclicity)
