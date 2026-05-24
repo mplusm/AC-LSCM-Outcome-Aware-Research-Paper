@@ -3,6 +3,10 @@
 # Resume-safe: skips any config+model+seed that already has a results.json.
 set -e
 
+# Support both 'python' and 'python3' depending on the system
+PYTHON=$(command -v python || command -v python3)
+export CUBLAS_WORKSPACE_CONFIG=:4096:8
+
 RESULTS_DIR="${RESULTS_DIR:-results}"
 LOG="$RESULTS_DIR/run.log"
 mkdir -p "$RESULTS_DIR"
@@ -24,7 +28,7 @@ log "Results dir: $RESULTS_DIR"
 # --- Main experiments ---
 for CFG in "${CONFIGS[@]}"; do
   log "Config: $CFG"
-  python -m src.train \
+  "$PYTHON" -m src.train \
     --config "$CFG" \
     --results-dir "$RESULTS_DIR" \
     --resume \
@@ -42,5 +46,5 @@ python -m src.train \
 
 log "=== All runs complete ==="
 log "Generating tables..."
-python scripts/make_tables.py --results-dir "$RESULTS_DIR" --output tables/
+"$PYTHON" scripts/make_tables.py --results-dir "$RESULTS_DIR" --output tables/
 log "Done. Tables in tables/"
