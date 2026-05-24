@@ -1,0 +1,9 @@
+{
+  "intervention_mse": 0.03570086881518364,
+  "counterfactual_mse": 0.037504252046346664,
+  "run_name": "synthetic_fork_vanilla_vae_seed2",
+  "model": "vanilla_vae",
+  "config": "synthetic_fork",
+  "seed": 2,
+  "epochs_run": 200
+}

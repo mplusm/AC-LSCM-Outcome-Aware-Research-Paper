@@ -1,0 +1,16 @@
+{
+  "intervention_mse": 0.05596926994621754,
+  "counterfactual_mse": 0.047046203166246414,
+  "shd": 8,
+  "dag_constraint": 0.03419208526611328,
+  "abduction_recovery_error": 0.06250057369470596,
+  "run_name": "ablation_no_contrastive_loss_seed1",
+  "model": "aclscm",
+  "config": "synthetic_er_k10",
+  "seed": 1,
+  "epochs_run": 112,
+  "agent_goal_rate": 0.8,
+  "agent_safety_violation_rate": 0.2,
+  "agent_appropriate_deferral_rate": 0.0,
+  "agent_n_episodes": 100
+}

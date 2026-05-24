@@ -1,0 +1,16 @@
+{
+  "intervention_mse": 0.08018311485648155,
+  "counterfactual_mse": 0.11543392017483711,
+  "shd": 74,
+  "dag_constraint": 7.462686538696289,
+  "abduction_recovery_error": 0.5582644045352936,
+  "run_name": "ablation_dagma_instead_of_notears_seed2",
+  "model": "aclscm",
+  "config": "synthetic_er_k10",
+  "seed": 2,
+  "epochs_run": 61,
+  "agent_goal_rate": 0.0,
+  "agent_safety_violation_rate": 0.4,
+  "agent_appropriate_deferral_rate": 0.0,
+  "agent_n_episodes": 100
+}

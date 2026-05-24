@@ -1,0 +1,13 @@
+{
+  "intervention_mse": 0.046467339619994164,
+  "counterfactual_mse": 0.051864080131053925,
+  "run_name": "synthetic_er_k10_small_transformer_seed0",
+  "model": "small_transformer",
+  "config": "synthetic_er_k10",
+  "seed": 0,
+  "epochs_run": 200,
+  "agent_goal_rate": 0.8,
+  "agent_safety_violation_rate": 0.19,
+  "agent_appropriate_deferral_rate": 0.05,
+  "agent_n_episodes": 100
+}

@@ -1,0 +1,9 @@
+{
+  "intervention_mse": 0.037039147689938545,
+  "counterfactual_mse": 0.038546618074178696,
+  "run_name": "synthetic_chain_dreamer_style_seed1",
+  "model": "dreamer_style",
+  "config": "synthetic_chain",
+  "seed": 1,
+  "epochs_run": 200
+}

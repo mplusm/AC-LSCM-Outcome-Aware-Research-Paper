@@ -1,0 +1,16 @@
+{
+  "intervention_mse": 0.1427576243877411,
+  "counterfactual_mse": 0.17314066737890244,
+  "shd": 9,
+  "dag_constraint": 4.454353332519531,
+  "abduction_recovery_error": 0.9730440080165863,
+  "run_name": "synthetic_chain_aclscm_seed0",
+  "model": "aclscm",
+  "config": "synthetic_chain",
+  "seed": 0,
+  "epochs_run": 25,
+  "agent_goal_rate": 0.8,
+  "agent_safety_violation_rate": 0.2,
+  "agent_appropriate_deferral_rate": 0.0,
+  "agent_n_episodes": 100
+}

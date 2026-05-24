@@ -1,5 +1,7 @@
-results/
-tables/
+# keep checkpoints and smoke-test artefacts out; commit final JSONs and tables
+results_smoke/
+results/**/*.pt
+results/**/train.log
 __pycache__/
 *.pyc
 *.pyo

@@ -1,0 +1,16 @@
+{
+  "intervention_mse": 0.04542105831205845,
+  "counterfactual_mse": 0.07160816341638565,
+  "shd": 0,
+  "dag_constraint": 0.005390167236328125,
+  "abduction_recovery_error": 0.2768436223268509,
+  "run_name": "synthetic_er_k5_aclscm_seed1",
+  "model": "aclscm",
+  "config": "synthetic_er_k5",
+  "seed": 1,
+  "epochs_run": 145,
+  "agent_goal_rate": 0.0,
+  "agent_safety_violation_rate": 0.38,
+  "agent_appropriate_deferral_rate": 0.0,
+  "agent_n_episodes": 100
+}
