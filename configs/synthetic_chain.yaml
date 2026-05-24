@@ -1,0 +1,23 @@
+name: synthetic_chain
+scm:
+  graph_type: chain
+  K: 10
+  seed: 0
+  n_train: 2000
+  n_test: 500
+training:
+  epochs: 200
+  batch_size: 64
+  lr: 1.0e-3
+  beta_1: 1.0
+  beta_2: 1.0
+  beta_3: 0.5
+  beta_4: 1.0
+  checkpoint_every: 10
+  precision: fp32
+models:
+  - aclscm
+  - vanilla_vae
+  - dreamer_style
+  - small_transformer
+seeds: [0, 1, 2]

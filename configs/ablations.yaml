@@ -1,0 +1,15 @@
+base: synthetic_er_k10
+ablations:
+  - name: no_causal_loss
+    overrides:
+      training.beta_3: 0.0
+  - name: no_contrastive_loss
+    overrides:
+      training.beta_4: 0.0
+  - name: no_do_operator
+    overrides:
+      model.use_do_operator: false
+  - name: dagma_instead_of_notears
+    overrides:
+      model.acyclicity: dagma
+seeds: [0, 1, 2]
