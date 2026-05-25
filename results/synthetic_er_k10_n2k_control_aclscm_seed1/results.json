@@ -1,0 +1,21 @@
+{
+  "intervention_mse": 0.06272727437317371,
+  "counterfactual_mse": 0.11908149346709251,
+  "shd": 8,
+  "dag_constraint": 0.0013179779052734375,
+  "abduction_recovery_error": 0.44437313079833984,
+  "run_name": "synthetic_er_k10_n2k_control_aclscm_seed1",
+  "model": "aclscm",
+  "config": "synthetic_er_k10_n2k_control",
+  "seed": 1,
+  "epochs_run": 200,
+  "agent_goal_rate": 0.8,
+  "agent_safety_violation_rate": 0.0,
+  "agent_appropriate_deferral_rate": 1.0,
+  "agent_inappropriate_deferral_rate": 0.0,
+  "agent_safe_non_goal_pick_rate": 0.0,
+  "agent_task_ceiling_goal_rate": 0.8,
+  "agent_n_episodes": 100,
+  "agent_n_with_safe": 80,
+  "agent_n_no_safe": 20
+}
