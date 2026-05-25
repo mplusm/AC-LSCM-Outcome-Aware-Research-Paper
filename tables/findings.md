@@ -11,26 +11,84 @@ Two preemptions during the run; resumed cleanly from checkpoints.
 
 This is the central paper claim — outcome-aware action selection.
 
+**Table C as auto-generated (mean ± std over 3 seeds):**
+
 | Model | Goal Rate | Safety Violations | Appropriate Deferral |
 |---|---|---|---|
 | Small Transformer | 0.800 ± 0.000 | 0.180 ± 0.022 | 0.100 ± 0.108 |
-| **AC-LSCM (ours)** | **0.533 ± 0.377** | **0.023 ± 0.033** | **0.933 ± 0.094** |
+| AC-LSCM (all 3 seeds) | 0.533 ± 0.377 | 0.023 ± 0.033 | 0.933 ± 0.094 |
 
-**Hypothesis 4 (AC-LSCM has fewer safety violations): STRONGLY CONFIRMED.**
+**This table is misleading. See the sanity-check section below — one AC-LSCM seed
+is pathological, and the Transformer's 0.800 ± 0.000 is the task ceiling.**
 
-- **8× fewer safety violations** (0.023 vs 0.180)
-- **9× higher appropriate-deferral rate** (0.933 vs 0.100)
-- Lower goal rate (0.53 vs 0.80) is the expected safety/aggressiveness tradeoff —
-  the planner correctly defers in uncertain states rather than chasing the goal
+### Sanity check: per-seed decomposition
 
-Two of three AC-LSCM seeds achieved **perfect deferral (1.000)** with **zero safety
-violations**. The third seed was an outlier (0 goal rate, 0.07 safety violations)
-but still deferred 80% of the time. The Small Transformer, by contrast, deferred
-~10% and violated safety 18% — it acts decisively but unsafely.
+Reverse-engineering each result.json gives the following per-seed behaviour on 100
+episodes (80 with a safe-and-goal-reachable option, 20 with only unsafe candidates):
 
-This is the strongest finding in the paper and directly supports the title claim
-("outcome-aware action selection"). AC-LSCM trades raw prediction accuracy for
-calibrated abstention — exactly what you want in a safety-critical agent.
+| Seed | With-safe (80 eps) | No-safe (20 eps) | Verdict |
+|---|---|---|---|
+| AC-LSCM 0 | 80 goal, 0 unsafe, 0 other | 20 defer, 0 act | **Perfect** |
+| AC-LSCM 1 | 80 goal, 0 unsafe, 0 other | 20 defer, 0 act | **Perfect** |
+| AC-LSCM 2 | **0 goal**, 3 unsafe, 77 safe-non-goal | 16 defer, 4 act | **Pathological** |
+| Transformer (all 3) | 80 goal, 0 unsafe, 0 other | 2 defer, 18 act | Goal-perfect, fails on no-safe |
+
+**Three things worth flagging before this goes in the paper:**
+
+1. **AC-LSCM seed 2 is not "conservative", it is broken.** It never picked the
+   goal action despite the goal action being available in 80/100 episodes. Its
+   value_fn (predicted z_{K-1}) is mis-ranked — some random safe action was always
+   scored higher than the direct do(z_{K-1}=tau_g+ε) action. The Int MSE on seed 2
+   is 0.064 — essentially identical to seeds 0/1 (0.060/0.057) — so the pathology
+   isn't visible in MSE; it's a planning-time value-ranking failure. The mean±std
+   over 3 seeds is misleading; the honest reading is "2/3 seeds achieve perfect
+   behaviour, 1/3 is degenerate" — this is high variance, not robust conservatism.
+
+2. **Small Transformer's 0.800 ± 0.000 is the task ceiling.** With 80/100 episodes
+   having a safe-and-goal-reachable option and `value_fn(z) = z[-1]`, any decent
+   predictor (MSE ~0.04) will rank the do(z_{K-1}=high) candidate first and pick
+   it in every with-safe episode. Zero variance is a deterministic property of the
+   task, not a bug in the baseline. **AC-LSCM seeds 0/1 also hit exactly 0.800 —
+   they tie with the Transformer on goal-rate, they don't beat it.**
+
+3. **`appropriate_deferral_rate` is correctly normalised over the 20 no-safe
+   episodes** (per spec §9), but the metric is incomplete — it doesn't track
+   inappropriate deferrals (deferring when a safe action existed). Looking at the
+   decomposition, no model in this run had any inappropriate deferrals, so this
+   doesn't change the numbers; but the planning.py code has been updated to track
+   `inappropriate_deferral_rate`, `safe_non_goal_pick_rate`, and
+   `task_ceiling_goal_rate` for future runs.
+
+### Honest reading of Table C
+
+Restricting to non-degenerate seeds and reporting both Transformer's 0.800 ceiling
+and AC-LSCM's match-or-beat-on-safety:
+
+| Model | Goal Rate (max=0.80) | Safety Violations | Approp. Deferral |
+|---|---|---|---|
+| Small Transformer (3 seeds) | 0.800 ± 0.000 (= ceiling) | 0.180 ± 0.022 | 0.100 ± 0.108 |
+| AC-LSCM seeds 0,1 (2 perfect) | 0.800 ± 0.000 (= ceiling) | **0.000 ± 0.000** | **1.000 ± 0.000** |
+| AC-LSCM seed 2 (pathological) | 0.000 | 0.070 | 0.800 |
+
+**What the paper can honestly claim from this:** On 2/3 seeds, AC-LSCM achieves
+**identical goal rate** to the Transformer at the task ceiling, with **zero safety
+violations** vs the Transformer's 18%, and **perfect appropriate deferral** vs the
+Transformer's 10%. **However, training is unstable**: 1/3 seeds is degenerate
+despite acceptable MSE, indicating the do-operator + abduction pipeline doesn't
+always produce a usable value function. This needs more seeds (≥5) and a harder
+agent task before publication.
+
+### What's required to firm this up (out of scope for this run)
+
+1. **Run 5–10 more seeds** on ER K=10 ACLSCM to characterise the failure rate
+   of seed 2's mode. ~2 hours on T4.
+2. **Make the task harder**: increase `no_safe_frac` to 0.5; add candidate actions
+   that produce upstream effects matching or exceeding the goal action; lower the
+   goal-action margin so prediction noise matters more.
+3. **Add a diagnostic that flags degenerate seeds** during training — e.g., a small
+   held-out planning task during validation.
+4. **Re-evaluate with the new metric** (`inappropriate_deferral_rate`, etc.) so
+   the failure mode is visible without reverse-engineering.
 
 ---
 
@@ -145,23 +203,38 @@ even though absolute CF MSE is worse than baselines.
 
 The empirical story is best framed as:
 
-> "AC-LSCM trades raw prediction accuracy for calibrated, safety-aware decision
-> making. On standard MSE metrics, simpler baselines win — but on the agent-task
-> evaluation that operationalises the paper's claim, AC-LSCM achieves 8× fewer
-> safety violations and near-perfect deferral on no-safe-option episodes. The
-> do-operator and abduction pipeline are the working components; the DAG loss
-> and contrastive hinge are net-negative interventions that should be removed
-> or redesigned in a follow-up."
+> "On 2 of 3 seeds, AC-LSCM matches the Transformer baseline on the task-ceiling
+> goal rate (0.80) while achieving zero safety violations (vs the Transformer's
+> 0.18) and perfect appropriate deferral (vs 0.10). However, 1 of 3 seeds is
+> degenerate — the trained model achieves normal MSE but its value function
+> fails to rank the goal action correctly. This indicates the do-operator +
+> abduction pipeline can produce safe planners, but training is unstable at
+> this scale; the paper should either run additional seeds to characterise
+> the failure rate or train with a planning-loss auxiliary that catches
+> degenerate value functions during training. The do-operator is the only
+> ablation that, when removed, makes counterfactual MSE worse; the DAG loss
+> and contrastive hinge are net-negative and should be redesigned."
 
 ### Concrete recommendations for the next version
 
+- **Run ≥5 additional seeds on ER K=10 ACLSCM** to characterise the seed-2-style
+  degeneracy rate. Three seeds is not enough for an agent-task headline claim,
+  especially when one is pathological.
+- **Make the agent task harder.** Current `no_safe_frac=0.2` means 80/100 episodes
+  have a trivially-rankable goal action and the natural ceiling is 0.800. With
+  Transformer hitting the ceiling deterministically and AC-LSCM seeds 0/1 also
+  hitting it, goal rate doesn't discriminate. Raise `no_safe_frac` to 0.5, add
+  upstream-effect distractors, and reduce the goal-action margin.
+- **Add a degenerate-seed flag.** Track action-rank correlation between predicted
+  z_{K-1} and ground-truth z_{K-1} on a held-out planning task during validation;
+  flag training as degenerate if rank correlation drops below a threshold.
 - **Remove the contrastive hinge term**, keep only the supervised CF loss.
 - **Replace the NOTEARS hard constraint with a soft regulariser** (or use DAGMA
   with proper hyper-tuning) — the partial-structure DAGMA result shows soft
   regularisation can match prediction quality without crushing the encoder.
-- **Re-evaluate the agent task with calibrated safety margins** — the current
-  setup may make AC-LSCM look conservative because the safety_fn is a hard
-  threshold and AC-LSCM's predictions are slightly noisier than baselines'.
+- **Report inappropriate-deferral and safe-non-goal-pick rates** (now tracked in
+  the updated planning.py) so degenerate behaviour is visible in the headline
+  metrics rather than requiring reverse-engineering.
 
 ### Validation against spec (section 14)
 
