@@ -7,86 +7,95 @@ Two preemptions during the run; resumed cleanly from checkpoints.
 
 ---
 
-## Headline result: Table C — Agent-task evaluation (ER K=10)
+## Headline result: Table C — Agent-task evaluation (ER K=10, 8 seeds)
 
-This is the central paper claim — outcome-aware action selection.
+This is the central paper claim — outcome-aware action selection. **Round 2 was
+initially run with 3 seeds, then extended to 8 seeds after a sanity-check showed
+high variance and one degenerate result.**
 
-**Table C as auto-generated (mean ± std over 3 seeds):**
+### Per-seed decomposition (all 8 AC-LSCM seeds + 3 Transformer seeds)
+
+100 episodes per seed (80 with safe-and-goal-reachable option, 20 no-safe-action).
+
+| Seed | Int MSE | With-safe (80 eps) | No-safe (20 eps) | Verdict |
+|---|---|---|---|---|
+| AC-LSCM 0 | 0.060 | 80 goal, 0 unsafe, 0 other | 20 defer, 0 act | **Perfect** |
+| AC-LSCM 1 | 0.057 | 80 goal, 0 unsafe, 0 other | 20 defer, 0 act | **Perfect** |
+| AC-LSCM 2 | 0.064 | 0 goal, 3 unsafe, 77 safe-non-goal | 16 defer, 4 act | Pathology A (mis-rank) |
+| AC-LSCM 3 | 0.054 | 80 goal, 0 unsafe, 0 other | 20 defer, 0 act | **Perfect** |
+| AC-LSCM 4 | 0.053 | 80 goal, 0 unsafe, 0 other | 20 defer, 0 act | **Perfect** |
+| AC-LSCM 5 | 0.056 | 0 goal, 0 unsafe, **80 safe-non-goal** | 20 defer, 0 act | Pathology B (passive) |
+| AC-LSCM 6 | 0.055 | 80 goal, 0 unsafe, 0 other | 20 defer, 0 act | **Perfect** |
+| AC-LSCM 7 | 0.060 | 80 goal, 0 unsafe, 0 other | 20 defer, 0 act | **Perfect** |
+| Transformer × 3 | 0.038 | 80 goal, 0 unsafe, 0 other | 2 defer, 18 act | Goal-perfect, fails on no-safe |
+
+**6/8 AC-LSCM seeds achieve perfect agent behaviour** (75% success rate, 95% Wilson
+CI: 37–96%). Two distinct failure modes appear at 2/8 (25%, CI 4–63%):
+
+- **Pathology A (seed 2): value-function mis-rank.** Value_fn(z) = predicted z_{K-1}
+  ranks some non-goal safe action above the direct do(z_{K-1}=tau_g+ε) goal action.
+  Picks unsafe in 3/80 with-safe and acts in 4/20 no-safe (all violations).
+- **Pathology B (seed 5): passive policy.** Picks a safe-non-goal action all 80
+  times. Zero safety violations, perfect deferral, but zero goal achievement.
+  Achieves the safety property by never acting on the goal-related factor.
+
+Both failure modes have **normal Int MSE (0.056–0.064, indistinguishable from
+working seeds 0.053–0.060)** — the pathology is at the planning-time
+value-ranking step, not at training-time prediction.
+
+### Table C summary (8 AC-LSCM seeds vs 3 Transformer seeds)
 
 | Model | Goal Rate | Safety Violations | Appropriate Deferral |
 |---|---|---|---|
-| Small Transformer | 0.800 ± 0.000 | 0.180 ± 0.022 | 0.100 ± 0.108 |
-| AC-LSCM (all 3 seeds) | 0.533 ± 0.377 | 0.023 ± 0.033 | 0.933 ± 0.094 |
+| Small Transformer (n=3) | 0.800 ± 0.000 *(=task ceiling)* | 0.180 ± 0.022 | 0.100 ± 0.108 |
+| AC-LSCM (all 8 seeds) | 0.600 ± 0.346 | **0.009 ± 0.023** | **0.975 ± 0.066** |
+| AC-LSCM (6 working seeds) | 0.800 ± 0.000 *(=task ceiling)* | **0.000 ± 0.000** | **1.000 ± 0.000** |
 
-**This table is misleading. See the sanity-check section below — one AC-LSCM seed
-is pathological, and the Transformer's 0.800 ± 0.000 is the task ceiling.**
+**The headline claim, supported across 8 seeds:**
 
-### Sanity check: per-seed decomposition
+> "On 6 of 8 seeds (75%), AC-LSCM matches the Transformer at the task-ceiling
+> goal rate of 0.800 with **zero safety violations** (vs the Transformer's 18%)
+> and **perfect appropriate deferral on no-safe-option episodes** (vs the
+> Transformer's 10%). Two of eight seeds show distinct planning-time failure
+> modes despite normal training-time MSE — one mis-ranks the goal action; one
+> converges to a passive policy that never selects the goal action.
+> Even the failure modes do not produce more safety violations than the
+> Transformer baseline (max 0.07 on the worst seed, vs Transformer mean 0.18)."
 
-Reverse-engineering each result.json gives the following per-seed behaviour on 100
-episodes (80 with a safe-and-goal-reachable option, 20 with only unsafe candidates):
+**Across all 8 seeds (including failures), AC-LSCM has 20× fewer safety
+violations than the Transformer** (0.009 vs 0.180) and 10× higher appropriate
+deferral (0.975 vs 0.100). The safety claim is robust to the failure modes;
+the goal-rate claim is conditional on training succeeding (which is currently
+unreliable at 75%).
 
-| Seed | With-safe (80 eps) | No-safe (20 eps) | Verdict |
-|---|---|---|---|
-| AC-LSCM 0 | 80 goal, 0 unsafe, 0 other | 20 defer, 0 act | **Perfect** |
-| AC-LSCM 1 | 80 goal, 0 unsafe, 0 other | 20 defer, 0 act | **Perfect** |
-| AC-LSCM 2 | **0 goal**, 3 unsafe, 77 safe-non-goal | 16 defer, 4 act | **Pathological** |
-| Transformer (all 3) | 80 goal, 0 unsafe, 0 other | 2 defer, 18 act | Goal-perfect, fails on no-safe |
+### Notes on methodology
 
-**Three things worth flagging before this goes in the paper:**
+- **Transformer's 0.800 ± 0.000 is the task ceiling**, not a bug. 80/100
+  episodes have a safe-and-goal-reachable option, so any predictor with
+  MSE ≤ ~0.05 ranks the goal action first and ties this ceiling.
+- **`appropriate_deferral_rate` is correctly normalised over the 20 no-safe
+  episodes** (per spec §9). The metric is incomplete — it doesn't track
+  inappropriate deferrals (deferring when a safe action existed); in this
+  run no model had any inappropriate deferrals, so this doesn't change
+  numbers. The planning.py code has been updated to track
+  `inappropriate_deferral_rate`, `safe_non_goal_pick_rate`, and
+  `task_ceiling_goal_rate` for future runs.
 
-1. **AC-LSCM seed 2 is not "conservative", it is broken.** It never picked the
-   goal action despite the goal action being available in 80/100 episodes. Its
-   value_fn (predicted z_{K-1}) is mis-ranked — some random safe action was always
-   scored higher than the direct do(z_{K-1}=tau_g+ε) action. The Int MSE on seed 2
-   is 0.064 — essentially identical to seeds 0/1 (0.060/0.057) — so the pathology
-   isn't visible in MSE; it's a planning-time value-ranking failure. The mean±std
-   over 3 seeds is misleading; the honest reading is "2/3 seeds achieve perfect
-   behaviour, 1/3 is degenerate" — this is high variance, not robust conservatism.
+### Recommended follow-ups (out of scope here)
 
-2. **Small Transformer's 0.800 ± 0.000 is the task ceiling.** With 80/100 episodes
-   having a safe-and-goal-reachable option and `value_fn(z) = z[-1]`, any decent
-   predictor (MSE ~0.04) will rank the do(z_{K-1}=high) candidate first and pick
-   it in every with-safe episode. Zero variance is a deterministic property of the
-   task, not a bug in the baseline. **AC-LSCM seeds 0/1 also hit exactly 0.800 —
-   they tie with the Transformer on goal-rate, they don't beat it.**
-
-3. **`appropriate_deferral_rate` is correctly normalised over the 20 no-safe
-   episodes** (per spec §9), but the metric is incomplete — it doesn't track
-   inappropriate deferrals (deferring when a safe action existed). Looking at the
-   decomposition, no model in this run had any inappropriate deferrals, so this
-   doesn't change the numbers; but the planning.py code has been updated to track
-   `inappropriate_deferral_rate`, `safe_non_goal_pick_rate`, and
-   `task_ceiling_goal_rate` for future runs.
-
-### Honest reading of Table C
-
-Restricting to non-degenerate seeds and reporting both Transformer's 0.800 ceiling
-and AC-LSCM's match-or-beat-on-safety:
-
-| Model | Goal Rate (max=0.80) | Safety Violations | Approp. Deferral |
-|---|---|---|---|
-| Small Transformer (3 seeds) | 0.800 ± 0.000 (= ceiling) | 0.180 ± 0.022 | 0.100 ± 0.108 |
-| AC-LSCM seeds 0,1 (2 perfect) | 0.800 ± 0.000 (= ceiling) | **0.000 ± 0.000** | **1.000 ± 0.000** |
-| AC-LSCM seed 2 (pathological) | 0.000 | 0.070 | 0.800 |
-
-**What the paper can honestly claim from this:** On 2/3 seeds, AC-LSCM achieves
-**identical goal rate** to the Transformer at the task ceiling, with **zero safety
-violations** vs the Transformer's 18%, and **perfect appropriate deferral** vs the
-Transformer's 10%. **However, training is unstable**: 1/3 seeds is degenerate
-despite acceptable MSE, indicating the do-operator + abduction pipeline doesn't
-always produce a usable value function. This needs more seeds (≥5) and a harder
-agent task before publication.
-
-### What's required to firm this up (out of scope for this run)
-
-1. **Run 5–10 more seeds** on ER K=10 ACLSCM to characterise the failure rate
-   of seed 2's mode. ~2 hours on T4.
-2. **Make the task harder**: increase `no_safe_frac` to 0.5; add candidate actions
-   that produce upstream effects matching or exceeding the goal action; lower the
-   goal-action margin so prediction noise matters more.
-3. **Add a diagnostic that flags degenerate seeds** during training — e.g., a small
-   held-out planning task during validation.
+1. **Diagnose seed 2 vs seed 5 failure modes.** Inspect each model's predicted
+   z_{K-1} ranking on candidate actions. Hypothesis: seed 2's encoder learnt
+   a representation where some upstream factor's intervention amplifies into
+   z_{K-1} more than the direct intervention; seed 5's per-factor MLP for
+   z_{K-1} learnt a non-monotonic mapping that saturates below tau_g.
+2. **Make the task harder** (raise no_safe_frac from 0.2 to 0.5; add
+   upstream-effect distractors; reduce goal-action margin from
+   U(0.1, 0.5) to U(0.05, 0.15)) so the goal-rate metric discriminates
+   between models that are at-ceiling vs above-ceiling.
+3. **Add a degenerate-seed detector during training.** Track action-rank
+   correlation between predicted z_{K-1} and ground-truth z_{K-1} on a
+   small validation planning task; flag training as degenerate if rank
+   correlation drops below threshold (e.g., < 0.5).
 4. **Re-evaluate with the new metric** (`inappropriate_deferral_rate`, etc.) so
    the failure mode is visible without reverse-engineering.
 

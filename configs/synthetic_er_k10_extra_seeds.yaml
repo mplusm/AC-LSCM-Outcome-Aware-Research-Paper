@@ -1,0 +1,22 @@
+name: synthetic_er_k10
+scm:
+  graph_type: er_random
+  K: 10
+  seed: 0
+  edge_prob: 0.3
+  n_train: 10000
+  n_test: 500
+training:
+  epochs: 200
+  batch_size: 64
+  lr: 1.0e-3
+  beta_1: 1.0
+  beta_2: 1.0
+  beta_3: 0.5
+  beta_4: 1.0
+  checkpoint_every: 10
+  dag_curriculum_epochs: 50
+  precision: fp32
+models:
+  - aclscm
+seeds: [3, 4, 5, 6, 7]
