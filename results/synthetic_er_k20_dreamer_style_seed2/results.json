@@ -1,9 +1,9 @@
 {
-  "intervention_mse": 0.06621759384870529,
-  "counterfactual_mse": 0.07142703235149384,
+  "intervention_mse": 0.047744499519467354,
+  "counterfactual_mse": 0.050825657323002815,
   "run_name": "synthetic_er_k20_dreamer_style_seed2",
   "model": "dreamer_style",
   "config": "synthetic_er_k20",
   "seed": 2,
-  "epochs_run": 200
+  "epochs_run": 149
 }

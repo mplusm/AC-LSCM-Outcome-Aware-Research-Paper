@@ -1,6 +1,6 @@
 {
-  "intervention_mse": 0.03236047551035881,
-  "counterfactual_mse": 0.032102443277835846,
+  "intervention_mse": 0.027659961953759193,
+  "counterfactual_mse": 0.028268619440495968,
   "run_name": "synthetic_er_k10_dreamer_style_seed2",
   "model": "dreamer_style",
   "config": "synthetic_er_k10",

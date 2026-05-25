@@ -1,9 +1,9 @@
 {
-  "intervention_mse": 0.0281085092574358,
-  "counterfactual_mse": 0.026906750164926052,
+  "intervention_mse": 0.025022225454449654,
+  "counterfactual_mse": 0.02379036508500576,
   "run_name": "synthetic_collider_dreamer_style_seed1",
   "model": "dreamer_style",
   "config": "synthetic_collider",
   "seed": 1,
-  "epochs_run": 188
+  "epochs_run": 158
 }

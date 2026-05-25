@@ -1,13 +1,13 @@
 {
-  "intervention_mse": 0.04352831095457077,
-  "counterfactual_mse": 0.04310513101518154,
+  "intervention_mse": 0.030197372660040855,
+  "counterfactual_mse": 0.03124066349118948,
   "run_name": "synthetic_collider_small_transformer_seed2",
   "model": "small_transformer",
   "config": "synthetic_collider",
   "seed": 2,
   "epochs_run": 200,
   "agent_goal_rate": 0.8,
-  "agent_safety_violation_rate": 0.15,
-  "agent_appropriate_deferral_rate": 0.25,
+  "agent_safety_violation_rate": 0.2,
+  "agent_appropriate_deferral_rate": 0.0,
   "agent_n_episodes": 100
 }

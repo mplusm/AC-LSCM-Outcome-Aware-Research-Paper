@@ -1,6 +1,6 @@
 {
-  "intervention_mse": 0.04599369876086712,
-  "counterfactual_mse": 0.04892032779753208,
+  "intervention_mse": 0.03105116728693247,
+  "counterfactual_mse": 0.03260928764939308,
   "run_name": "synthetic_fork_small_transformer_seed1",
   "model": "small_transformer",
   "config": "synthetic_fork",

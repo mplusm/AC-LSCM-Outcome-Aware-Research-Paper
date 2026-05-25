@@ -1,9 +1,9 @@
 {
-  "intervention_mse": 0.07613634318113327,
-  "counterfactual_mse": 0.1668023243546486,
+  "intervention_mse": 0.06373879127204418,
+  "counterfactual_mse": 0.15079449862241745,
   "shd": 8,
-  "dag_constraint": 0.001415252685546875,
-  "abduction_recovery_error": 0.37791667878627777,
+  "dag_constraint": 0.0,
+  "abduction_recovery_error": 0.37402427196502686,
   "run_name": "ablation_no_do_operator_seed2",
   "model": "aclscm",
   "config": "synthetic_er_k10",

@@ -1,9 +1,9 @@
 {
-  "intervention_mse": 0.03180609084665775,
-  "counterfactual_mse": 0.03360868617892265,
+  "intervention_mse": 0.028796562924981117,
+  "counterfactual_mse": 0.030446600168943405,
   "run_name": "synthetic_fork_dreamer_style_seed0",
   "model": "dreamer_style",
   "config": "synthetic_fork",
   "seed": 0,
-  "epochs_run": 195
+  "epochs_run": 131
 }

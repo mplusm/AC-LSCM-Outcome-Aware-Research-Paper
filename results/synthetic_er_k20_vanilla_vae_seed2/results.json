@@ -1,9 +1,9 @@
 {
-  "intervention_mse": 0.07364452257752419,
-  "counterfactual_mse": 0.08308928832411766,
+  "intervention_mse": 0.04762824811041355,
+  "counterfactual_mse": 0.05079117231070995,
   "run_name": "synthetic_er_k20_vanilla_vae_seed2",
   "model": "vanilla_vae",
   "config": "synthetic_er_k20",
   "seed": 2,
-  "epochs_run": 200
+  "epochs_run": 198
 }

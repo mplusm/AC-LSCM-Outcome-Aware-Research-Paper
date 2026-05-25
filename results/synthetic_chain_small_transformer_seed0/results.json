@@ -1,13 +1,13 @@
 {
-  "intervention_mse": 0.05307386256754398,
-  "counterfactual_mse": 0.057528141885995865,
+  "intervention_mse": 0.04299994930624962,
+  "counterfactual_mse": 0.04750397242605686,
   "run_name": "synthetic_chain_small_transformer_seed0",
   "model": "small_transformer",
   "config": "synthetic_chain",
   "seed": 0,
   "epochs_run": 200,
   "agent_goal_rate": 0.8,
-  "agent_safety_violation_rate": 0.06,
-  "agent_appropriate_deferral_rate": 0.7,
+  "agent_safety_violation_rate": 0.13,
+  "agent_appropriate_deferral_rate": 0.35,
   "agent_n_episodes": 100
 }

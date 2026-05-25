@@ -1,16 +1,16 @@
 {
-  "intervention_mse": 0.07036468014121056,
-  "counterfactual_mse": 0.14187905192375183,
+  "intervention_mse": 0.05967669561505318,
+  "counterfactual_mse": 0.10672322660684586,
   "shd": 8,
-  "dag_constraint": 0.0014657974243164062,
-  "abduction_recovery_error": 0.36192694306373596,
+  "dag_constraint": 0.0,
+  "abduction_recovery_error": 0.35565556585788727,
   "run_name": "ablation_no_do_operator_seed0",
   "model": "aclscm",
   "config": "synthetic_er_k10",
   "seed": 0,
   "epochs_run": 200,
-  "agent_goal_rate": 0.0,
-  "agent_safety_violation_rate": 0.36,
-  "agent_appropriate_deferral_rate": 0.0,
+  "agent_goal_rate": 0.8,
+  "agent_safety_violation_rate": 0.0,
+  "agent_appropriate_deferral_rate": 1.0,
   "agent_n_episodes": 100
 }

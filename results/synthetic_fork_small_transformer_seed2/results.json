@@ -1,13 +1,13 @@
 {
-  "intervention_mse": 0.04463795758783817,
-  "counterfactual_mse": 0.04632890969514847,
+  "intervention_mse": 0.03524693846702576,
+  "counterfactual_mse": 0.03405419923365116,
   "run_name": "synthetic_fork_small_transformer_seed2",
   "model": "small_transformer",
   "config": "synthetic_fork",
   "seed": 2,
   "epochs_run": 200,
   "agent_goal_rate": 0.8,
-  "agent_safety_violation_rate": 0.2,
-  "agent_appropriate_deferral_rate": 0.0,
+  "agent_safety_violation_rate": 0.09,
+  "agent_appropriate_deferral_rate": 0.55,
   "agent_n_episodes": 100
 }

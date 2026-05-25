@@ -1,16 +1,16 @@
 {
-  "intervention_mse": 0.07931221649050713,
-  "counterfactual_mse": 0.08202068880200386,
+  "intervention_mse": 0.057034965604543686,
+  "counterfactual_mse": 0.1872924417257309,
   "shd": 9,
-  "dag_constraint": 1.9767303466796875,
-  "abduction_recovery_error": 0.5393506288528442,
+  "dag_constraint": 0.0,
+  "abduction_recovery_error": 0.3361538350582123,
   "run_name": "synthetic_fork_aclscm_seed1",
   "model": "aclscm",
   "config": "synthetic_fork",
   "seed": 1,
-  "epochs_run": 36,
+  "epochs_run": 110,
   "agent_goal_rate": 0.8,
-  "agent_safety_violation_rate": 0.2,
-  "agent_appropriate_deferral_rate": 0.0,
+  "agent_safety_violation_rate": 0.0,
+  "agent_appropriate_deferral_rate": 1.0,
   "agent_n_episodes": 100
 }

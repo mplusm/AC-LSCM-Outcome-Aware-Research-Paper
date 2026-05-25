@@ -1,16 +1,16 @@
 {
-  "intervention_mse": 0.1427576243877411,
-  "counterfactual_mse": 0.17314066737890244,
+  "intervention_mse": 0.10603439062833786,
+  "counterfactual_mse": 0.06504174508154392,
   "shd": 9,
-  "dag_constraint": 4.454353332519531,
-  "abduction_recovery_error": 0.9730440080165863,
+  "dag_constraint": 0.0,
+  "abduction_recovery_error": 0.5164623260498047,
   "run_name": "synthetic_chain_aclscm_seed0",
   "model": "aclscm",
   "config": "synthetic_chain",
   "seed": 0,
-  "epochs_run": 25,
+  "epochs_run": 168,
   "agent_goal_rate": 0.8,
-  "agent_safety_violation_rate": 0.2,
-  "agent_appropriate_deferral_rate": 0.0,
+  "agent_safety_violation_rate": 0.0,
+  "agent_appropriate_deferral_rate": 1.0,
   "agent_n_episodes": 100
 }

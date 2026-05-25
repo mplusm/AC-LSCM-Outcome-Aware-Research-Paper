@@ -1,6 +1,6 @@
 {
-  "intervention_mse": 0.046467339619994164,
-  "counterfactual_mse": 0.051864080131053925,
+  "intervention_mse": 0.03524508327245712,
+  "counterfactual_mse": 0.03766406513750553,
   "run_name": "synthetic_er_k10_small_transformer_seed0",
   "model": "small_transformer",
   "config": "synthetic_er_k10",

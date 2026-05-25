@@ -1,9 +1,9 @@
 {
-  "intervention_mse": 0.03684903308749199,
-  "counterfactual_mse": 0.039981672540307045,
+  "intervention_mse": 0.03113572020083666,
+  "counterfactual_mse": 0.031909648329019547,
   "run_name": "synthetic_chain_vanilla_vae_seed2",
   "model": "vanilla_vae",
   "config": "synthetic_chain",
   "seed": 2,
-  "epochs_run": 132
+  "epochs_run": 165
 }

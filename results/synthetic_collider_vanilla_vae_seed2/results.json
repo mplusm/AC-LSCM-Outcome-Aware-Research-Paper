@@ -1,9 +1,9 @@
 {
-  "intervention_mse": 0.030511957593262196,
-  "counterfactual_mse": 0.03022895287722349,
+  "intervention_mse": 0.025625712238252163,
+  "counterfactual_mse": 0.024421564303338528,
   "run_name": "synthetic_collider_vanilla_vae_seed2",
   "model": "vanilla_vae",
   "config": "synthetic_collider",
   "seed": 2,
-  "epochs_run": 168
+  "epochs_run": 145
 }
