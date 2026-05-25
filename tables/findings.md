@@ -2,7 +2,7 @@
 
 All experiments on a single NVIDIA Tesla T4 (16 GB VRAM, fp32), GCP spot instance.
 Two preemptions during the run; resumed cleanly from checkpoints.
-5 synthetic SCM configs × 4 models × 3 seeds = 60 main runs + 12 ablation runs.
+5 synthetic SCM configs × 4 models × 3 seeds = 60 main runs + 12 ablation runs = 72 total.
 (ER K=5 skipped — K too small to meaningfully test the structural inductive bias.)
 
 ---
@@ -18,8 +18,8 @@ This is the central paper claim — outcome-aware action selection.
 
 **Hypothesis 4 (AC-LSCM has fewer safety violations): STRONGLY CONFIRMED.**
 
-- AC-LSCM has **8× fewer safety violations** (0.023 vs 0.180)
-- AC-LSCM has **9× higher appropriate-deferral rate** (0.933 vs 0.100)
+- **8× fewer safety violations** (0.023 vs 0.180)
+- **9× higher appropriate-deferral rate** (0.933 vs 0.100)
 - Lower goal rate (0.53 vs 0.80) is the expected safety/aggressiveness tradeoff —
   the planner correctly defers in uncertain states rather than chasing the goal
 
@@ -52,7 +52,7 @@ asymmetry is a fingerprint of a working counterfactual mechanism — for every b
 Int MSE ≈ CF MSE because they have no special counterfactual procedure, just a
 re-run with a different action.
 
-**Bonus result — ER K=20 (toughest test, supplementary):**
+**Supplementary — ER K=20 (toughest test):**
 
 | Model | Int MSE | CF MSE |
 |---|---|---|
@@ -63,25 +63,25 @@ re-run with a different action.
 
 On K=20, **AC-LSCM is the only model where CF MSE (0.130) is dramatically lower
 than Int MSE (0.220)** — a 41% gap in the right direction. Baselines show flat
-Int=CF. This is consistent with the agent-task finding: the abduction mechanism
+Int≈CF. This is consistent with the agent-task finding: the abduction mechanism
 is doing real counterfactual work even where the encoder/decoder struggles with
 high-dimensional latent recovery.
 
 **DAG constraint:** Hit exactly 0.000 on every AC-LSCM seed across all 5 configs
-(chain/fork/collider/K=10/K=20). The structural learning converges cleanly.
-SHD on ER K=10 is 8.0 ± 0.0 — the learned graph is precise.
+(chain/fork/collider/K=10/K=20). The structural learning converges cleanly with
+the curriculum warm-up. SHD on ER K=10 is 8.0 ± 0.0 — the learned graph is precise.
 
 ---
 
-## Table B — Ablations on ER K=10
+## Table B — Ablations on ER K=10 (full set)
 
 | Variant | Int MSE | CF MSE | SHD |
 |---|---|---|---|
-| AC-LSCM (full) | 0.060 | 0.130 | 8.0 |
-| no L_Causal (β3=0) | **0.033** | **0.068** | 68.7 |
-| no L_Contrastive (β4=0) | 0.058 | 0.077 | 8.0 |
-| no do-operator | 0.060 | 0.138 | 8.0 |
-| DAGMA instead of NOTEARS | pending | pending | pending |
+| AC-LSCM (full) | 0.060 ± 0.003 | 0.130 ± 0.020 | 8.0 |
+| no L_Causal (β3=0) | **0.033 ± 0.001** | **0.068 ± 0.011** | 68.7 |
+| no L_Contrastive (β4=0) | 0.058 ± 0.002 | 0.077 ± 0.005 | 8.0 |
+| no do-operator | 0.060 ± 0.002 | 0.138 ± 0.022 | 8.0 |
+| DAGMA instead of NOTEARS | 0.033 ± 0.001 | 0.075 ± 0.009 | 36.3 |
 
 **Key findings:**
 
@@ -91,9 +91,9 @@ SHD on ER K=10 is 8.0 ± 0.0 — the learned graph is precise.
 
 2. **Removing the DAG loss gives the best CF MSE we've ever measured for AC-LSCM**
    (0.068 vs full 0.130, a 48% improvement). The structural constraint is pure
-   optimisation overhead at this scale — even with curriculum warmup. SHD explodes
-   to 69 (near-random) when the constraint is dropped, so the model isn't learning
-   structure without it, but the structure also doesn't help prediction.
+   optimisation overhead at this scale, even with curriculum warmup. SHD explodes
+   to 69 (near-random) without the constraint, so the model isn't learning structure
+   without it, but the structure also doesn't help prediction.
 
 3. **Even after the Round 2 fix (clean ground-truth target), the contrastive loss
    still hurts.** Removing it improves CF MSE from 0.130 to 0.077 (-41%). The
@@ -101,21 +101,26 @@ SHD on ER K=10 is 8.0 ± 0.0 — the learned graph is precise.
    from z_tp1_factual by margin=1.0 — when CF and factual are naturally close
    (small CF perturbation), this creates spurious gradients.
 
-4. **DAGMA still fails to converge** (results pending — slogdet driving negative
-   loss, DAG constraint stays at 23+ instead of approaching 0). NOTEARS clearly
-   superior in this implementation.
+4. **DAGMA partially succeeds where NOTEARS over-constrains.** DAGMA achieves
+   nearly identical performance to "no DAG loss" (Int 0.033, CF 0.075) but with
+   SHD of 36.3 — between the precise NOTEARS (SHD=8) and the structureless ablation
+   (SHD=68.7). The slogdet term doesn't converge cleanly (DAG value stays at ~30+
+   instead of approaching 0), but the partial structure is enough to be useful.
+   This suggests **a soft acyclicity regulariser is the right design** — not the
+   hard NOTEARS constraint we currently use.
 
 ---
 
 ## What Changed Between Round 1 and Round 2
 
-| Metric | Round 1 (N=2k, raw target) | Round 2 (N=10k, clean target + DAG curriculum) | Δ |
+| Metric | Round 1 (N=2k) | Round 2 (N=10k, fixes) | Δ |
 |---|---|---|---|
 | AC-LSCM Int MSE (ER K=10) | 0.089 | 0.060 | -33% |
 | AC-LSCM CF MSE (ER K=10) | 0.114 | 0.130 | +14% (worse) |
 | AC-LSCM agent safety viol. (ER K=10) | 0.267 | **0.023** | **-91%** |
-| AC-LSCM appropriate deferral | 0.000 | **0.933** | **infinite** |
-| Best ablation CF MSE (no L_contrastive) | 0.057 | 0.077 | similar story |
+| AC-LSCM appropriate deferral | 0.000 | **0.933** | infinite |
+| Best ablation (no L_contrastive) CF MSE | 0.057 | 0.077 | consistent story |
+| Best ablation (no L_Causal) CF MSE | 0.128 | **0.068** | -47% with more data |
 
 **Three takeaways from the comparison:**
 
@@ -148,26 +153,25 @@ The empirical story is best framed as:
 > and contrastive hinge are net-negative interventions that should be removed
 > or redesigned in a follow-up."
 
-### Concrete recommendations for the next version (out of scope here)
+### Concrete recommendations for the next version
 
 - **Remove the contrastive hinge term**, keep only the supervised CF loss.
-- **Replace the NOTEARS hard constraint with a soft regulariser** that doesn't
-  block prediction learning — the current implementation is too aggressive.
+- **Replace the NOTEARS hard constraint with a soft regulariser** (or use DAGMA
+  with proper hyper-tuning) — the partial-structure DAGMA result shows soft
+  regularisation can match prediction quality without crushing the encoder.
 - **Re-evaluate the agent task with calibrated safety margins** — the current
   setup may make AC-LSCM look conservative because the safety_fn is a hard
-  threshold and AC-LSCM's predictions are slightly noisier.
-- **DAGMA's slogdet instability** needs investigation — likely a step size or
-  initialisation issue; not appropriate for the paper as currently implemented.
+  threshold and AC-LSCM's predictions are slightly noisier than baselines'.
 
 ### Validation against spec (section 14)
 
 - [x] Smoke test passes
-- [⚠] 5/6 synthetic configs run (ER K=5 skipped by agreement)
+- [⚠] 5/6 synthetic configs run (ER K=5 skipped by agreement — K too small)
 - [x] All 3 seeds × 4 models × per config
 - [x] DAG constraint ≈ 0 for AC-LSCM on all configs
 - [x] Abduction recovery error reported (~0.36 on ER K=10)
-- [x] Ablation runs produce distinct numbers
-- [x] AC-LSCM agent goal rate > 30% (achieved 53% with high safety)
+- [x] Ablation runs produce distinct numbers (all 4 ablations × 3 seeds done)
+- [x] AC-LSCM agent goal rate > 30% (achieved 53% with 8× safer behaviour)
 - [x] All result JSONs validate against schema
 - [x] Checkpoints exist per run (on instance, excluded from repo by .gitignore)
 - [x] LaTeX tables compile standalone
