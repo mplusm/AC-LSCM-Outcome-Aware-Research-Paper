@@ -1,0 +1,4960 @@
+{
+ "v2": {
+  "er_k10": {
+   "aclscm_original_no_do": {
+    "mse": {
+     "intervention_mse": {
+      "mean": 0.06044661874572436,
+      "std": 0.003577205600074767,
+      "n": 3,
+      "values": [
+       0.06,
+       0.0571,
+       0.0642
+      ]
+     },
+     "counterfactual_mse": {
+      "mean": 0.14135116835435232,
+      "std": 0.03442622000475849,
+      "n": 3,
+      "values": [
+       0.1036,
+       0.171,
+       0.1494
+      ]
+     },
+     "shd": {
+      "mean": 8.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       8.0,
+       8.0,
+       8.0
+      ]
+     },
+     "dag_constraint": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "epochs_run": {
+      "mean": 200.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       200.0,
+       200.0,
+       200.0
+      ]
+     },
+     "n_learned_edges": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     }
+    },
+    "direct_original_latent": {
+     "goal_rate": {
+      "mean": 0.5333333333333333,
+      "std": 0.46188021535170065,
+      "n": 3,
+      "values": [
+       0.8,
+       0.8,
+       0.0
+      ]
+     },
+     "safety_violation_rate": {
+      "mean": 0.06,
+      "std": 0.10392304845413264,
+      "n": 3,
+      "values": [
+       0.0,
+       0.0,
+       0.18
+      ]
+     },
+     "appropriate_deferral_rate": {
+      "mean": 0.8333333333333334,
+      "std": 0.28867513459481287,
+      "n": 3,
+      "values": [
+       1.0,
+       1.0,
+       0.5
+      ]
+     },
+     "inappropriate_deferral_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "safe_non_goal_pick_rate": {
+      "mean": 0.3,
+      "std": 0.5196152422706632,
+      "n": 3,
+      "values": [
+       0.0,
+       0.0,
+       0.9
+      ]
+     },
+     "n_episodes": {
+      "mean": 100.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       100.0,
+       100.0,
+       100.0
+      ]
+     }
+    },
+    "direct_original_decoded": {
+     "goal_rate": {
+      "mean": 0.8000000000000002,
+      "std": 1.3597399555105182e-16,
+      "n": 3,
+      "values": [
+       0.8,
+       0.8,
+       0.8
+      ]
+     },
+     "safety_violation_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "appropriate_deferral_rate": {
+      "mean": 1.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       1.0,
+       1.0,
+       1.0
+      ]
+     },
+     "inappropriate_deferral_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "safe_non_goal_pick_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "n_episodes": {
+      "mean": 100.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       100.0,
+       100.0,
+       100.0
+      ]
+     }
+    },
+    "direct_in_range_decoded": {
+     "goal_rate": {
+      "mean": 0.8000000000000002,
+      "std": 1.3597399555105182e-16,
+      "n": 3,
+      "values": [
+       0.8,
+       0.8,
+       0.8
+      ]
+     },
+     "safety_violation_rate": {
+      "mean": 0.02,
+      "std": 0.034641016151377546,
+      "n": 3,
+      "values": [
+       0.0,
+       0.06,
+       0.0
+      ]
+     },
+     "appropriate_deferral_rate": {
+      "mean": 0.9,
+      "std": 0.17320508075688776,
+      "n": 3,
+      "values": [
+       1.0,
+       0.7,
+       1.0
+      ]
+     },
+     "inappropriate_deferral_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "safe_non_goal_pick_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "n_episodes": {
+      "mean": 100.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       100.0,
+       100.0,
+       100.0
+      ]
+     }
+    },
+    "consequence_decoded": {
+     "goal_rate": {
+      "mean": 0.6633333333333334,
+      "std": 0.012018504251546616,
+      "n": 3,
+      "values": [
+       0.66,
+       0.6533,
+       0.6767
+      ]
+     },
+     "goal_rate_of_reachable": {
+      "mean": 0.8844444444444445,
+      "std": 0.01602467233539555,
+      "n": 3,
+      "values": [
+       0.88,
+       0.8711,
+       0.9022
+      ]
+     },
+     "safety_violation_rate": {
+      "mean": 0.31888888888888894,
+      "std": 0.016442942874387502,
+      "n": 3,
+      "values": [
+       0.3267,
+       0.33,
+       0.3
+      ]
+     },
+     "appropriate_deferral_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "inappropriate_deferral_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "n_episodes": {
+      "mean": 300.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       300.0,
+       300.0,
+       300.0
+      ]
+     },
+     "goal_ceiling": {
+      "mean": 0.75,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       0.75,
+       0.75,
+       0.75
+      ]
+     }
+    }
+   },
+   "aclscm_original": {
+    "mse": {
+     "intervention_mse": {
+      "mean": 0.057587385177612305,
+      "std": 0.0043440053697418775,
+      "n": 5,
+      "values": [
+       0.0596,
+       0.0578,
+       0.0636,
+       0.0542,
+       0.0528
+      ]
+     },
+     "counterfactual_mse": {
+      "mean": 0.1270600315183401,
+      "std": 0.04027584654986818,
+      "n": 5,
+      "values": [
+       0.1062,
+       0.1673,
+       0.1352,
+       0.158,
+       0.0686
+      ]
+     },
+     "shd": {
+      "mean": 8.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       8.0,
+       8.0,
+       8.0,
+       8.0,
+       8.0
+      ]
+     },
+     "dag_constraint": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "epochs_run": {
+      "mean": 194.8,
+      "std": 11.627553482998906,
+      "n": 5,
+      "values": [
+       200.0,
+       200.0,
+       200.0,
+       174.0,
+       200.0
+      ]
+     },
+     "n_learned_edges": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     }
+    },
+    "direct_original_latent": {
+     "goal_rate": {
+      "mean": 0.64,
+      "std": 0.35777087639996635,
+      "n": 5,
+      "values": [
+       0.8,
+       0.8,
+       0.0,
+       0.8,
+       0.8
+      ]
+     },
+     "safety_violation_rate": {
+      "mean": 0.072,
+      "std": 0.16099689437998485,
+      "n": 5,
+      "values": [
+       0.0,
+       0.0,
+       0.36,
+       0.0,
+       0.0
+      ]
+     },
+     "appropriate_deferral_rate": {
+      "mean": 0.82,
+      "std": 0.40249223594996214,
+      "n": 5,
+      "values": [
+       1.0,
+       1.0,
+       0.1,
+       1.0,
+       1.0
+      ]
+     },
+     "inappropriate_deferral_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "safe_non_goal_pick_rate": {
+      "mean": 0.155,
+      "std": 0.3465905365124674,
+      "n": 5,
+      "values": [
+       0.0,
+       0.0,
+       0.775,
+       0.0,
+       0.0
+      ]
+     },
+     "n_episodes": {
+      "mean": 100.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       100.0,
+       100.0,
+       100.0,
+       100.0,
+       100.0
+      ]
+     }
+    },
+    "direct_original_decoded": {
+     "goal_rate": {
+      "mean": 0.8,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.8,
+       0.8,
+       0.8,
+       0.8,
+       0.8
+      ]
+     },
+     "safety_violation_rate": {
+      "mean": 0.008,
+      "std": 0.01788854381999832,
+      "n": 5,
+      "values": [
+       0.0,
+       0.0,
+       0.04,
+       0.0,
+       0.0
+      ]
+     },
+     "appropriate_deferral_rate": {
+      "mean": 0.96,
+      "std": 0.08944271909999157,
+      "n": 5,
+      "values": [
+       1.0,
+       1.0,
+       0.8,
+       1.0,
+       1.0
+      ]
+     },
+     "inappropriate_deferral_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "safe_non_goal_pick_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "n_episodes": {
+      "mean": 100.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       100.0,
+       100.0,
+       100.0,
+       100.0,
+       100.0
+      ]
+     }
+    },
+    "direct_in_range_decoded": {
+     "goal_rate": {
+      "mean": 0.8,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.8,
+       0.8,
+       0.8,
+       0.8,
+       0.8
+      ]
+     },
+     "safety_violation_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "appropriate_deferral_rate": {
+      "mean": 1.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0
+      ]
+     },
+     "inappropriate_deferral_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "safe_non_goal_pick_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "n_episodes": {
+      "mean": 100.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       100.0,
+       100.0,
+       100.0,
+       100.0,
+       100.0
+      ]
+     }
+    },
+    "consequence_decoded": {
+     "goal_rate": {
+      "mean": 0.6593333333333333,
+      "std": 0.02532017201977726,
+      "n": 5,
+      "values": [
+       0.6167,
+       0.6733,
+       0.68,
+       0.67,
+       0.6567
+      ]
+     },
+     "goal_rate_of_reachable": {
+      "mean": 0.8791111111111111,
+      "std": 0.03376022935970301,
+      "n": 5,
+      "values": [
+       0.8222,
+       0.8978,
+       0.9067,
+       0.8933,
+       0.8756
+      ]
+     },
+     "safety_violation_rate": {
+      "mean": 0.32133333333333336,
+      "std": 0.018043158136965796,
+      "n": 5,
+      "values": [
+       0.3433,
+       0.3133,
+       0.2967,
+       0.32,
+       0.3333
+      ]
+     },
+     "appropriate_deferral_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "inappropriate_deferral_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "n_episodes": {
+      "mean": 300.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       300.0,
+       300.0,
+       300.0,
+       300.0,
+       300.0
+      ]
+     },
+     "goal_ceiling": {
+      "mean": 0.75,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.75,
+       0.75,
+       0.75,
+       0.75,
+       0.75
+      ]
+     }
+    }
+   },
+   "aclscm_simplified": {
+    "mse": {
+     "intervention_mse": {
+      "mean": 0.030075927497819066,
+      "std": 0.0006705220637360773,
+      "n": 4,
+      "values": [
+       0.0307,
+       0.0297,
+       0.0306,
+       0.0293
+      ]
+     },
+     "counterfactual_mse": {
+      "mean": 0.020412201760336757,
+      "std": 0.0003006808447363715,
+      "n": 4,
+      "values": [
+       0.0208,
+       0.0203,
+       0.0201,
+       0.0204
+      ]
+     },
+     "shd": {
+      "mean": 3.0,
+      "std": 0.0,
+      "n": 4,
+      "values": [
+       3.0,
+       3.0,
+       3.0,
+       3.0
+      ]
+     },
+     "dag_constraint": {
+      "mean": 0.00011920928955078125,
+      "std": 2.9497173842524325e-05,
+      "n": 4,
+      "values": [
+       0.0001,
+       0.0001,
+       0.0001,
+       0.0001
+      ]
+     },
+     "epochs_run": {
+      "mean": 98.5,
+      "std": 3.7859388972001824,
+      "n": 4,
+      "values": [
+       96.0,
+       96.0,
+       98.0,
+       104.0
+      ]
+     },
+     "n_learned_edges": {
+      "mean": 5.0,
+      "std": 0.0,
+      "n": 4,
+      "values": [
+       5.0,
+       5.0,
+       5.0,
+       5.0
+      ]
+     }
+    },
+    "direct_original_latent": {
+     "goal_rate": {
+      "mean": 0.8,
+      "std": 0.0,
+      "n": 4,
+      "values": [
+       0.8,
+       0.8,
+       0.8,
+       0.8
+      ]
+     },
+     "safety_violation_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 4,
+      "values": [
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "appropriate_deferral_rate": {
+      "mean": 1.0,
+      "std": 0.0,
+      "n": 4,
+      "values": [
+       1.0,
+       1.0,
+       1.0,
+       1.0
+      ]
+     },
+     "inappropriate_deferral_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 4,
+      "values": [
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "safe_non_goal_pick_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 4,
+      "values": [
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "n_episodes": {
+      "mean": 100.0,
+      "std": 0.0,
+      "n": 4,
+      "values": [
+       100.0,
+       100.0,
+       100.0,
+       100.0
+      ]
+     }
+    },
+    "direct_original_decoded": {
+     "goal_rate": {
+      "mean": 0.8,
+      "std": 0.0,
+      "n": 4,
+      "values": [
+       0.8,
+       0.8,
+       0.8,
+       0.8
+      ]
+     },
+     "safety_violation_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 4,
+      "values": [
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "appropriate_deferral_rate": {
+      "mean": 1.0,
+      "std": 0.0,
+      "n": 4,
+      "values": [
+       1.0,
+       1.0,
+       1.0,
+       1.0
+      ]
+     },
+     "inappropriate_deferral_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 4,
+      "values": [
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "safe_non_goal_pick_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 4,
+      "values": [
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "n_episodes": {
+      "mean": 100.0,
+      "std": 0.0,
+      "n": 4,
+      "values": [
+       100.0,
+       100.0,
+       100.0,
+       100.0
+      ]
+     }
+    },
+    "direct_in_range_decoded": {
+     "goal_rate": {
+      "mean": 0.8,
+      "std": 0.0,
+      "n": 4,
+      "values": [
+       0.8,
+       0.8,
+       0.8,
+       0.8
+      ]
+     },
+     "safety_violation_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 4,
+      "values": [
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "appropriate_deferral_rate": {
+      "mean": 1.0,
+      "std": 0.0,
+      "n": 4,
+      "values": [
+       1.0,
+       1.0,
+       1.0,
+       1.0
+      ]
+     },
+     "inappropriate_deferral_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 4,
+      "values": [
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "safe_non_goal_pick_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 4,
+      "values": [
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "n_episodes": {
+      "mean": 100.0,
+      "std": 0.0,
+      "n": 4,
+      "values": [
+       100.0,
+       100.0,
+       100.0,
+       100.0
+      ]
+     }
+    },
+    "consequence_decoded": {
+     "goal_rate": {
+      "mean": 0.7091666666666667,
+      "std": 0.005692750425533101,
+      "n": 4,
+      "values": [
+       0.7033,
+       0.7067,
+       0.71,
+       0.7167
+      ]
+     },
+     "goal_rate_of_reachable": {
+      "mean": 0.9455555555555556,
+      "std": 0.007590333900710825,
+      "n": 4,
+      "values": [
+       0.9378,
+       0.9422,
+       0.9467,
+       0.9556
+      ]
+     },
+     "safety_violation_rate": {
+      "mean": 0.24583333333333335,
+      "std": 0.0073911859420278244,
+      "n": 4,
+      "values": [
+       0.2433,
+       0.25,
+       0.2533,
+       0.2367
+      ]
+     },
+     "appropriate_deferral_rate": {
+      "mean": 0.09,
+      "std": 0.006666666666666667,
+      "n": 4,
+      "values": [
+       0.0933,
+       0.0933,
+       0.08,
+       0.0933
+      ]
+     },
+     "inappropriate_deferral_rate": {
+      "mean": 0.0044444444444444444,
+      "std": 0.0,
+      "n": 4,
+      "values": [
+       0.0044,
+       0.0044,
+       0.0044,
+       0.0044
+      ]
+     },
+     "n_episodes": {
+      "mean": 300.0,
+      "std": 0.0,
+      "n": 4,
+      "values": [
+       300.0,
+       300.0,
+       300.0,
+       300.0
+      ]
+     },
+     "goal_ceiling": {
+      "mean": 0.75,
+      "std": 0.0,
+      "n": 4,
+      "values": [
+       0.75,
+       0.75,
+       0.75,
+       0.75
+      ]
+     }
+    },
+    "consequence_oracle": {
+     "goal_rate": {
+      "mean": 0.6833333333333333,
+      "std": 0.0,
+      "n": 1,
+      "values": [
+       0.6833
+      ]
+     },
+     "goal_rate_of_reachable": {
+      "mean": 0.9111111111111111,
+      "std": 0.0,
+      "n": 1,
+      "values": [
+       0.9111
+      ]
+     },
+     "safety_violation_rate": {
+      "mean": 0.04666666666666667,
+      "std": 0.0,
+      "n": 1,
+      "values": [
+       0.0467
+      ]
+     },
+     "appropriate_deferral_rate": {
+      "mean": 0.8533333333333334,
+      "std": 0.0,
+      "n": 1,
+      "values": [
+       0.8533
+      ]
+     },
+     "inappropriate_deferral_rate": {
+      "mean": 0.02666666666666667,
+      "std": 0.0,
+      "n": 1,
+      "values": [
+       0.0267
+      ]
+     },
+     "n_episodes": {
+      "mean": 300.0,
+      "std": 0.0,
+      "n": 1,
+      "values": [
+       300.0
+      ]
+     },
+     "goal_ceiling": {
+      "mean": 0.75,
+      "std": 0.0,
+      "n": 1,
+      "values": [
+       0.75
+      ]
+     }
+    }
+   },
+   "aclscm_simplified_st_dense_no_cf": {
+    "mse": {
+     "intervention_mse": {
+      "mean": 0.026881220377981664,
+      "std": 0.00036459029207908523,
+      "n": 5,
+      "values": [
+       0.0268,
+       0.0267,
+       0.027,
+       0.0264,
+       0.0274
+      ]
+     },
+     "counterfactual_mse": {
+      "mean": 0.021263437718153,
+      "std": 0.0007270408491136862,
+      "n": 5,
+      "values": [
+       0.0221,
+       0.0206,
+       0.0214,
+       0.0218,
+       0.0205
+      ]
+     },
+     "shd": {
+      "mean": 82.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       82.0,
+       82.0,
+       82.0,
+       82.0,
+       82.0
+      ]
+     },
+     "dag_constraint": {
+      "mean": 936.6670043945312,
+      "std": 52.416964640392926,
+      "n": 5,
+      "values": [
+       902.8026,
+       918.6119,
+       1018.3472,
+       887.125,
+       956.4484
+      ]
+     },
+     "epochs_run": {
+      "mean": 138.6,
+      "std": 40.42647647272762,
+      "n": 5,
+      "values": [
+       127.0,
+       99.0,
+       200.0,
+       156.0,
+       111.0
+      ]
+     },
+     "n_learned_edges": {
+      "mean": 90.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       90.0,
+       90.0,
+       90.0,
+       90.0,
+       90.0
+      ]
+     }
+    },
+    "direct_original_latent": {
+     "goal_rate": {
+      "mean": 0.4800000000000001,
+      "std": 0.4381780460041329,
+      "n": 5,
+      "values": [
+       0.8,
+       0.8,
+       0.8,
+       0.0,
+       0.0
+      ]
+     },
+     "safety_violation_rate": {
+      "mean": 0.278,
+      "std": 0.10825894882179485,
+      "n": 5,
+      "values": [
+       0.2,
+       0.2,
+       0.2,
+       0.37,
+       0.42
+      ]
+     },
+     "appropriate_deferral_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "inappropriate_deferral_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "safe_non_goal_pick_rate": {
+      "mean": 0.3025,
+      "std": 0.4148041706637,
+      "n": 5,
+      "values": [
+       0.0,
+       0.0,
+       0.0,
+       0.7875,
+       0.725
+      ]
+     },
+     "n_episodes": {
+      "mean": 100.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       100.0,
+       100.0,
+       100.0,
+       100.0,
+       100.0
+      ]
+     }
+    },
+    "direct_original_decoded": {
+     "goal_rate": {
+      "mean": 0.8,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.8,
+       0.8,
+       0.8,
+       0.8,
+       0.8
+      ]
+     },
+     "safety_violation_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "appropriate_deferral_rate": {
+      "mean": 1.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0
+      ]
+     },
+     "inappropriate_deferral_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "safe_non_goal_pick_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "n_episodes": {
+      "mean": 100.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       100.0,
+       100.0,
+       100.0,
+       100.0,
+       100.0
+      ]
+     }
+    },
+    "direct_in_range_decoded": {
+     "goal_rate": {
+      "mean": 0.8,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.8,
+       0.8,
+       0.8,
+       0.8,
+       0.8
+      ]
+     },
+     "safety_violation_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "appropriate_deferral_rate": {
+      "mean": 1.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0
+      ]
+     },
+     "inappropriate_deferral_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "safe_non_goal_pick_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "n_episodes": {
+      "mean": 100.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       100.0,
+       100.0,
+       100.0,
+       100.0,
+       100.0
+      ]
+     }
+    },
+    "consequence_decoded": {
+     "goal_rate": {
+      "mean": 0.7266666666666668,
+      "std": 0.0033333333333332993,
+      "n": 5,
+      "values": [
+       0.73,
+       0.7233,
+       0.7267,
+       0.73,
+       0.7233
+      ]
+     },
+     "goal_rate_of_reachable": {
+      "mean": 0.9688888888888888,
+      "std": 0.004444444444444473,
+      "n": 5,
+      "values": [
+       0.9733,
+       0.9644,
+       0.9689,
+       0.9733,
+       0.9644
+      ]
+     },
+     "safety_violation_rate": {
+      "mean": 0.06933333333333333,
+      "std": 0.009249624617007736,
+      "n": 5,
+      "values": [
+       0.0833,
+       0.0667,
+       0.06,
+       0.0733,
+       0.0633
+      ]
+     },
+     "appropriate_deferral_rate": {
+      "mean": 0.7466666666666667,
+      "std": 0.03399346342395189,
+      "n": 5,
+      "values": [
+       0.6933,
+       0.76,
+       0.7733,
+       0.7333,
+       0.7733
+      ]
+     },
+     "inappropriate_deferral_rate": {
+      "mean": 0.0026666666666666666,
+      "std": 0.0024343224778007383,
+      "n": 5,
+      "values": [
+       0.0,
+       0.0044,
+       0.0044,
+       0.0044,
+       0.0
+      ]
+     },
+     "n_episodes": {
+      "mean": 300.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       300.0,
+       300.0,
+       300.0,
+       300.0,
+       300.0
+      ]
+     },
+     "goal_ceiling": {
+      "mean": 0.75,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.75,
+       0.75,
+       0.75,
+       0.75,
+       0.75
+      ]
+     }
+    }
+   },
+   "aclscm_simplified_st_dense": {
+    "mse": {
+     "intervention_mse": {
+      "mean": 0.027213297473887604,
+      "std": 0.0002983730088263855,
+      "n": 3,
+      "values": [
+       0.0274,
+       0.0269,
+       0.0274
+      ]
+     },
+     "counterfactual_mse": {
+      "mean": 0.019369691299895447,
+      "std": 0.0007456725838478469,
+      "n": 3,
+      "values": [
+       0.02,
+       0.0195,
+       0.0186
+      ]
+     },
+     "shd": {
+      "mean": 82.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       82.0,
+       82.0,
+       82.0
+      ]
+     },
+     "dag_constraint": {
+      "mean": 518.0004577636719,
+      "std": 15.6328015482012,
+      "n": 3,
+      "values": [
+       522.1296,
+       531.1542,
+       500.7176
+      ]
+     },
+     "epochs_run": {
+      "mean": 145.66666666666666,
+      "std": 18.610033136277146,
+      "n": 3,
+      "values": [
+       126.0,
+       148.0,
+       163.0
+      ]
+     },
+     "n_learned_edges": {
+      "mean": 90.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       90.0,
+       90.0,
+       90.0
+      ]
+     }
+    },
+    "direct_original_latent": {
+     "goal_rate": {
+      "mean": 0.8000000000000002,
+      "std": 1.3597399555105182e-16,
+      "n": 3,
+      "values": [
+       0.8,
+       0.8,
+       0.8
+      ]
+     },
+     "safety_violation_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "appropriate_deferral_rate": {
+      "mean": 1.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       1.0,
+       1.0,
+       1.0
+      ]
+     },
+     "inappropriate_deferral_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "safe_non_goal_pick_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "n_episodes": {
+      "mean": 100.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       100.0,
+       100.0,
+       100.0
+      ]
+     }
+    },
+    "direct_original_decoded": {
+     "goal_rate": {
+      "mean": 0.8000000000000002,
+      "std": 1.3597399555105182e-16,
+      "n": 3,
+      "values": [
+       0.8,
+       0.8,
+       0.8
+      ]
+     },
+     "safety_violation_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "appropriate_deferral_rate": {
+      "mean": 1.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       1.0,
+       1.0,
+       1.0
+      ]
+     },
+     "inappropriate_deferral_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "safe_non_goal_pick_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "n_episodes": {
+      "mean": 100.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       100.0,
+       100.0,
+       100.0
+      ]
+     }
+    },
+    "direct_in_range_decoded": {
+     "goal_rate": {
+      "mean": 0.8000000000000002,
+      "std": 1.3597399555105182e-16,
+      "n": 3,
+      "values": [
+       0.8,
+       0.8,
+       0.8
+      ]
+     },
+     "safety_violation_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "appropriate_deferral_rate": {
+      "mean": 1.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       1.0,
+       1.0,
+       1.0
+      ]
+     },
+     "inappropriate_deferral_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "safe_non_goal_pick_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "n_episodes": {
+      "mean": 100.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       100.0,
+       100.0,
+       100.0
+      ]
+     }
+    },
+    "consequence_decoded": {
+     "goal_rate": {
+      "mean": 0.7144444444444445,
+      "std": 0.0038490017945975296,
+      "n": 3,
+      "values": [
+       0.7167,
+       0.71,
+       0.7167
+      ]
+     },
+     "goal_rate_of_reachable": {
+      "mean": 0.9525925925925925,
+      "std": 0.005132002392796707,
+      "n": 3,
+      "values": [
+       0.9556,
+       0.9467,
+       0.9556
+      ]
+     },
+     "safety_violation_rate": {
+      "mean": 0.04666666666666667,
+      "std": 0.003333333333333334,
+      "n": 3,
+      "values": [
+       0.0467,
+       0.0433,
+       0.05
+      ]
+     },
+     "appropriate_deferral_rate": {
+      "mean": 0.8488888888888888,
+      "std": 0.015396007178390056,
+      "n": 3,
+      "values": [
+       0.84,
+       0.8667,
+       0.84
+      ]
+     },
+     "inappropriate_deferral_rate": {
+      "mean": 0.0044444444444444444,
+      "std": 0.0044444444444444444,
+      "n": 3,
+      "values": [
+       0.0044,
+       0.0089,
+       0.0
+      ]
+     },
+     "n_episodes": {
+      "mean": 300.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       300.0,
+       300.0,
+       300.0
+      ]
+     },
+     "goal_ceiling": {
+      "mean": 0.75,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       0.75,
+       0.75,
+       0.75
+      ]
+     }
+    }
+   },
+   "aclscm_simplified_st_no_cf": {
+    "mse": {
+     "intervention_mse": {
+      "mean": 0.03048621832082669,
+      "std": 0.0022209028597793452,
+      "n": 3,
+      "values": [
+       0.0294,
+       0.033,
+       0.029
+      ]
+     },
+     "counterfactual_mse": {
+      "mean": 0.02813180908560753,
+      "std": 0.0006000535534659056,
+      "n": 3,
+      "values": [
+       0.0288,
+       0.0276,
+       0.028
+      ]
+     },
+     "shd": {
+      "mean": 3.6666666666666665,
+      "std": 1.1547005383792515,
+      "n": 3,
+      "values": [
+       3.0,
+       5.0,
+       3.0
+      ]
+     },
+     "dag_constraint": {
+      "mean": 0.001037915547688802,
+      "std": 0.0016145766262446609,
+      "n": 3,
+      "values": [
+       0.0001,
+       0.0001,
+       0.0029
+      ]
+     },
+     "epochs_run": {
+      "mean": 166.66666666666666,
+      "std": 57.735026918962575,
+      "n": 3,
+      "values": [
+       200.0,
+       200.0,
+       100.0
+      ]
+     },
+     "n_learned_edges": {
+      "mean": 4.333333333333333,
+      "std": 1.1547005383792517,
+      "n": 3,
+      "values": [
+       5.0,
+       3.0,
+       5.0
+      ]
+     }
+    },
+    "direct_original_latent": {
+     "goal_rate": {
+      "mean": 0.8000000000000002,
+      "std": 1.3597399555105182e-16,
+      "n": 3,
+      "values": [
+       0.8,
+       0.8,
+       0.8
+      ]
+     },
+     "safety_violation_rate": {
+      "mean": 0.20000000000000004,
+      "std": 3.3993498887762956e-17,
+      "n": 3,
+      "values": [
+       0.2,
+       0.2,
+       0.2
+      ]
+     },
+     "appropriate_deferral_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "inappropriate_deferral_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "safe_non_goal_pick_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "n_episodes": {
+      "mean": 100.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       100.0,
+       100.0,
+       100.0
+      ]
+     }
+    },
+    "direct_original_decoded": {
+     "goal_rate": {
+      "mean": 0.8000000000000002,
+      "std": 1.3597399555105182e-16,
+      "n": 3,
+      "values": [
+       0.8,
+       0.8,
+       0.8
+      ]
+     },
+     "safety_violation_rate": {
+      "mean": 0.0033333333333333335,
+      "std": 0.005773502691896258,
+      "n": 3,
+      "values": [
+       0.0,
+       0.0,
+       0.01
+      ]
+     },
+     "appropriate_deferral_rate": {
+      "mean": 0.9833333333333334,
+      "std": 0.028867513459481315,
+      "n": 3,
+      "values": [
+       1.0,
+       1.0,
+       0.95
+      ]
+     },
+     "inappropriate_deferral_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "safe_non_goal_pick_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "n_episodes": {
+      "mean": 100.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       100.0,
+       100.0,
+       100.0
+      ]
+     }
+    },
+    "direct_in_range_decoded": {
+     "goal_rate": {
+      "mean": 0.8000000000000002,
+      "std": 1.3597399555105182e-16,
+      "n": 3,
+      "values": [
+       0.8,
+       0.8,
+       0.8
+      ]
+     },
+     "safety_violation_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "appropriate_deferral_rate": {
+      "mean": 1.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       1.0,
+       1.0,
+       1.0
+      ]
+     },
+     "inappropriate_deferral_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "safe_non_goal_pick_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "n_episodes": {
+      "mean": 100.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       100.0,
+       100.0,
+       100.0
+      ]
+     }
+    },
+    "consequence_decoded": {
+     "goal_rate": {
+      "mean": 0.6655555555555556,
+      "std": 0.030245905752924872,
+      "n": 3,
+      "values": [
+       0.6433,
+       0.7,
+       0.6533
+      ]
+     },
+     "goal_rate_of_reachable": {
+      "mean": 0.8874074074074074,
+      "std": 0.04032787433723321,
+      "n": 3,
+      "values": [
+       0.8578,
+       0.9333,
+       0.8711
+      ]
+     },
+     "safety_violation_rate": {
+      "mean": 0.28,
+      "std": 0.02905932629027115,
+      "n": 3,
+      "values": [
+       0.2933,
+       0.2467,
+       0.3
+      ]
+     },
+     "appropriate_deferral_rate": {
+      "mean": 0.12888888888888891,
+      "std": 0.03355481971231444,
+      "n": 3,
+      "values": [
+       0.16,
+       0.0933,
+       0.1333
+      ]
+     },
+     "inappropriate_deferral_rate": {
+      "mean": 0.002962962962962963,
+      "std": 0.002566001196398337,
+      "n": 3,
+      "values": [
+       0.0044,
+       0.0044,
+       0.0
+      ]
+     },
+     "n_episodes": {
+      "mean": 300.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       300.0,
+       300.0,
+       300.0
+      ]
+     },
+     "goal_ceiling": {
+      "mean": 0.75,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       0.75,
+       0.75,
+       0.75
+      ]
+     }
+    }
+   },
+   "aclscm_simplified_st_no_do": {
+    "mse": {
+     "intervention_mse": {
+      "mean": 0.02740420276920001,
+      "std": 0.0005189918117698037,
+      "n": 3,
+      "values": [
+       0.028,
+       0.027,
+       0.0272
+      ]
+     },
+     "counterfactual_mse": {
+      "mean": 0.020507870241999626,
+      "std": 0.000519538908211332,
+      "n": 3,
+      "values": [
+       0.0211,
+       0.0204,
+       0.02
+      ]
+     },
+     "shd": {
+      "mean": 1.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       1.0,
+       1.0,
+       1.0
+      ]
+     },
+     "dag_constraint": {
+      "mean": 0.0035893122355143228,
+      "std": 0.002964993592647115,
+      "n": 3,
+      "values": [
+       0.0067,
+       0.0032,
+       0.0008
+      ]
+     },
+     "epochs_run": {
+      "mean": 120.66666666666667,
+      "std": 29.26317367158479,
+      "n": 3,
+      "values": [
+       96.0,
+       113.0,
+       153.0
+      ]
+     },
+     "n_learned_edges": {
+      "mean": 7.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       7.0,
+       7.0,
+       7.0
+      ]
+     }
+    },
+    "direct_original_latent": {
+     "goal_rate": {
+      "mean": 0.8000000000000002,
+      "std": 1.3597399555105182e-16,
+      "n": 3,
+      "values": [
+       0.8,
+       0.8,
+       0.8
+      ]
+     },
+     "safety_violation_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "appropriate_deferral_rate": {
+      "mean": 1.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       1.0,
+       1.0,
+       1.0
+      ]
+     },
+     "inappropriate_deferral_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "safe_non_goal_pick_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "n_episodes": {
+      "mean": 100.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       100.0,
+       100.0,
+       100.0
+      ]
+     }
+    },
+    "direct_original_decoded": {
+     "goal_rate": {
+      "mean": 0.8000000000000002,
+      "std": 1.3597399555105182e-16,
+      "n": 3,
+      "values": [
+       0.8,
+       0.8,
+       0.8
+      ]
+     },
+     "safety_violation_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "appropriate_deferral_rate": {
+      "mean": 1.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       1.0,
+       1.0,
+       1.0
+      ]
+     },
+     "inappropriate_deferral_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "safe_non_goal_pick_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "n_episodes": {
+      "mean": 100.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       100.0,
+       100.0,
+       100.0
+      ]
+     }
+    },
+    "direct_in_range_decoded": {
+     "goal_rate": {
+      "mean": 0.8000000000000002,
+      "std": 1.3597399555105182e-16,
+      "n": 3,
+      "values": [
+       0.8,
+       0.8,
+       0.8
+      ]
+     },
+     "safety_violation_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "appropriate_deferral_rate": {
+      "mean": 1.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       1.0,
+       1.0,
+       1.0
+      ]
+     },
+     "inappropriate_deferral_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "safe_non_goal_pick_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "n_episodes": {
+      "mean": 100.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       100.0,
+       100.0,
+       100.0
+      ]
+     }
+    },
+    "consequence_decoded": {
+     "goal_rate": {
+      "mean": 0.7055555555555556,
+      "std": 0.001924500897298733,
+      "n": 3,
+      "values": [
+       0.7067,
+       0.7033,
+       0.7067
+      ]
+     },
+     "goal_rate_of_reachable": {
+      "mean": 0.9407407407407407,
+      "std": 0.002566001196398289,
+      "n": 3,
+      "values": [
+       0.9422,
+       0.9378,
+       0.9422
+      ]
+     },
+     "safety_violation_rate": {
+      "mean": 0.0911111111111111,
+      "std": 0.04822785425380157,
+      "n": 3,
+      "values": [
+       0.06,
+       0.0667,
+       0.1467
+      ]
+     },
+     "appropriate_deferral_rate": {
+      "mean": 0.6533333333333333,
+      "std": 0.1852325865259974,
+      "n": 3,
+      "values": [
+       0.7733,
+       0.7467,
+       0.44
+      ]
+     },
+     "inappropriate_deferral_rate": {
+      "mean": 0.0162962962962963,
+      "std": 0.0025660011963983364,
+      "n": 3,
+      "values": [
+       0.0178,
+       0.0178,
+       0.0133
+      ]
+     },
+     "n_episodes": {
+      "mean": 300.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       300.0,
+       300.0,
+       300.0
+      ]
+     },
+     "goal_ceiling": {
+      "mean": 0.75,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       0.75,
+       0.75,
+       0.75
+      ]
+     }
+    }
+   },
+   "aclscm_simplified_st": {
+    "mse": {
+     "intervention_mse": {
+      "mean": 0.02713888119906187,
+      "std": 0.0004049804304950894,
+      "n": 5,
+      "values": [
+       0.0275,
+       0.0268,
+       0.0268,
+       0.0269,
+       0.0276
+      ]
+     },
+     "counterfactual_mse": {
+      "mean": 0.01976329889148474,
+      "std": 0.0004258494942462566,
+      "n": 5,
+      "values": [
+       0.0204,
+       0.0198,
+       0.0193,
+       0.0195,
+       0.0198
+      ]
+     },
+     "shd": {
+      "mean": 1.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0
+      ]
+     },
+     "dag_constraint": {
+      "mean": 0.0051898956298828125,
+      "std": 0.003421602369278151,
+      "n": 5,
+      "values": [
+       0.0054,
+       0.0032,
+       0.0009,
+       0.0065,
+       0.0099
+      ]
+     },
+     "epochs_run": {
+      "mean": 110.6,
+      "std": 25.234896472940008,
+      "n": 5,
+      "values": [
+       101.0,
+       113.0,
+       153.0,
+       97.0,
+       89.0
+      ]
+     },
+     "n_learned_edges": {
+      "mean": 7.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       7.0,
+       7.0,
+       7.0,
+       7.0,
+       7.0
+      ]
+     }
+    },
+    "direct_original_latent": {
+     "goal_rate": {
+      "mean": 0.8,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.8,
+       0.8,
+       0.8,
+       0.8,
+       0.8
+      ]
+     },
+     "safety_violation_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "appropriate_deferral_rate": {
+      "mean": 1.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0
+      ]
+     },
+     "inappropriate_deferral_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "safe_non_goal_pick_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "n_episodes": {
+      "mean": 100.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       100.0,
+       100.0,
+       100.0,
+       100.0,
+       100.0
+      ]
+     }
+    },
+    "direct_original_decoded": {
+     "goal_rate": {
+      "mean": 0.8,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.8,
+       0.8,
+       0.8,
+       0.8,
+       0.8
+      ]
+     },
+     "safety_violation_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "appropriate_deferral_rate": {
+      "mean": 1.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0
+      ]
+     },
+     "inappropriate_deferral_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "safe_non_goal_pick_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "n_episodes": {
+      "mean": 100.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       100.0,
+       100.0,
+       100.0,
+       100.0,
+       100.0
+      ]
+     }
+    },
+    "direct_in_range_decoded": {
+     "goal_rate": {
+      "mean": 0.8,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.8,
+       0.8,
+       0.8,
+       0.8,
+       0.8
+      ]
+     },
+     "safety_violation_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "appropriate_deferral_rate": {
+      "mean": 1.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0
+      ]
+     },
+     "inappropriate_deferral_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "safe_non_goal_pick_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "n_episodes": {
+      "mean": 100.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       100.0,
+       100.0,
+       100.0,
+       100.0,
+       100.0
+      ]
+     }
+    },
+    "consequence_decoded": {
+     "goal_rate": {
+      "mean": 0.7053333333333334,
+      "std": 0.00380058475033046,
+      "n": 5,
+      "values": [
+       0.7033,
+       0.7067,
+       0.71,
+       0.7,
+       0.7067
+      ]
+     },
+     "goal_rate_of_reachable": {
+      "mean": 0.9404444444444444,
+      "std": 0.005067446333773926,
+      "n": 5,
+      "values": [
+       0.9378,
+       0.9422,
+       0.9467,
+       0.9333,
+       0.9422
+      ]
+     },
+     "safety_violation_rate": {
+      "mean": 0.08399999999999999,
+      "std": 0.04172662352876292,
+      "n": 5,
+      "values": [
+       0.1533,
+       0.0567,
+       0.0933,
+       0.06,
+       0.0567
+      ]
+     },
+     "appropriate_deferral_rate": {
+      "mean": 0.6853333333333332,
+      "std": 0.16264480727442032,
+      "n": 5,
+      "values": [
+       0.4133,
+       0.7867,
+       0.6533,
+       0.7867,
+       0.7867
+      ]
+     },
+     "inappropriate_deferral_rate": {
+      "mean": 0.015111111111111112,
+      "std": 0.003975231959999626,
+      "n": 5,
+      "values": [
+       0.0178,
+       0.0133,
+       0.0089,
+       0.0178,
+       0.0178
+      ]
+     },
+     "n_episodes": {
+      "mean": 300.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       300.0,
+       300.0,
+       300.0,
+       300.0,
+       300.0
+      ]
+     },
+     "goal_ceiling": {
+      "mean": 0.75,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.75,
+       0.75,
+       0.75,
+       0.75,
+       0.75
+      ]
+     }
+    }
+   },
+   "aclscm_simplified_st_true_graph": {
+    "mse": {
+     "intervention_mse": {
+      "mean": 0.026874891482293606,
+      "std": 0.00027799445554690537,
+      "n": 3,
+      "values": [
+       0.0272,
+       0.0266,
+       0.0268
+      ]
+     },
+     "counterfactual_mse": {
+      "mean": 0.019442697676519554,
+      "std": 0.000765112089819168,
+      "n": 3,
+      "values": [
+       0.0201,
+       0.0196,
+       0.0186
+      ]
+     },
+     "shd": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "dag_constraint": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "epochs_run": {
+      "mean": 131.33333333333334,
+      "std": 9.237604307034012,
+      "n": 3,
+      "values": [
+       126.0,
+       126.0,
+       142.0
+      ]
+     },
+     "n_learned_edges": {
+      "mean": 8.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       8.0,
+       8.0,
+       8.0
+      ]
+     }
+    },
+    "direct_original_latent": {
+     "goal_rate": {
+      "mean": 0.8000000000000002,
+      "std": 1.3597399555105182e-16,
+      "n": 3,
+      "values": [
+       0.8,
+       0.8,
+       0.8
+      ]
+     },
+     "safety_violation_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "appropriate_deferral_rate": {
+      "mean": 1.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       1.0,
+       1.0,
+       1.0
+      ]
+     },
+     "inappropriate_deferral_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "safe_non_goal_pick_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "n_episodes": {
+      "mean": 100.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       100.0,
+       100.0,
+       100.0
+      ]
+     }
+    },
+    "direct_original_decoded": {
+     "goal_rate": {
+      "mean": 0.8000000000000002,
+      "std": 1.3597399555105182e-16,
+      "n": 3,
+      "values": [
+       0.8,
+       0.8,
+       0.8
+      ]
+     },
+     "safety_violation_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "appropriate_deferral_rate": {
+      "mean": 1.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       1.0,
+       1.0,
+       1.0
+      ]
+     },
+     "inappropriate_deferral_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "safe_non_goal_pick_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "n_episodes": {
+      "mean": 100.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       100.0,
+       100.0,
+       100.0
+      ]
+     }
+    },
+    "direct_in_range_decoded": {
+     "goal_rate": {
+      "mean": 0.8000000000000002,
+      "std": 1.3597399555105182e-16,
+      "n": 3,
+      "values": [
+       0.8,
+       0.8,
+       0.8
+      ]
+     },
+     "safety_violation_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "appropriate_deferral_rate": {
+      "mean": 1.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       1.0,
+       1.0,
+       1.0
+      ]
+     },
+     "inappropriate_deferral_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "safe_non_goal_pick_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "n_episodes": {
+      "mean": 100.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       100.0,
+       100.0,
+       100.0
+      ]
+     }
+    },
+    "consequence_decoded": {
+     "goal_rate": {
+      "mean": 0.7166666666666667,
+      "std": 0.0033333333333332993,
+      "n": 3,
+      "values": [
+       0.7167,
+       0.72,
+       0.7133
+      ]
+     },
+     "goal_rate_of_reachable": {
+      "mean": 0.9555555555555556,
+      "std": 0.0044444444444444176,
+      "n": 3,
+      "values": [
+       0.9556,
+       0.96,
+       0.9511
+      ]
+     },
+     "safety_violation_rate": {
+      "mean": 0.04777777777777778,
+      "std": 0.0019245008972987529,
+      "n": 3,
+      "values": [
+       0.05,
+       0.0467,
+       0.0467
+      ]
+     },
+     "appropriate_deferral_rate": {
+      "mean": 0.8266666666666667,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       0.8267,
+       0.8267,
+       0.8267
+      ]
+     },
+     "inappropriate_deferral_rate": {
+      "mean": 0.005925925925925926,
+      "std": 0.006789001029564208,
+      "n": 3,
+      "values": [
+       0.0044,
+       0.0,
+       0.0133
+      ]
+     },
+     "n_episodes": {
+      "mean": 300.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       300.0,
+       300.0,
+       300.0
+      ]
+     },
+     "goal_ceiling": {
+      "mean": 0.75,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       0.75,
+       0.75,
+       0.75
+      ]
+     }
+    }
+   },
+   "dreamer_style": {
+    "mse": {
+     "intervention_mse": {
+      "mean": 0.02804286703467369,
+      "std": 0.0003209185145798351,
+      "n": 5,
+      "values": [
+       0.028,
+       0.0281,
+       0.028,
+       0.0276,
+       0.0285
+      ]
+     },
+     "counterfactual_mse": {
+      "mean": 0.028733566775918006,
+      "std": 0.0008769360704526124,
+      "n": 5,
+      "values": [
+       0.0302,
+       0.0286,
+       0.0285,
+       0.028,
+       0.0283
+      ]
+     },
+     "epochs_run": {
+      "mean": 138.6,
+      "std": 40.58694371346529,
+      "n": 5,
+      "values": [
+       200.0,
+       107.0,
+       159.0,
+       105.0,
+       122.0
+      ]
+     }
+    },
+    "direct_original_latent": {
+     "goal_rate": {
+      "mean": 0.13,
+      "std": 0.2906888370749727,
+      "n": 5,
+      "values": [
+       0.0,
+       0.0,
+       0.0,
+       0.65,
+       0.0
+      ]
+     },
+     "safety_violation_rate": {
+      "mean": 0.5040000000000001,
+      "std": 0.41722895393296955,
+      "n": 5,
+      "values": [
+       1.0,
+       0.2,
+       0.92,
+       0.2,
+       0.2
+      ]
+     },
+     "appropriate_deferral_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "inappropriate_deferral_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "safe_non_goal_pick_rate": {
+      "mean": 0.4575,
+      "std": 0.4996561317546298,
+      "n": 5,
+      "values": [
+       0.0,
+       1.0,
+       0.1,
+       0.1875,
+       1.0
+      ]
+     },
+     "n_episodes": {
+      "mean": 100.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       100.0,
+       100.0,
+       100.0,
+       100.0,
+       100.0
+      ]
+     }
+    },
+    "direct_original_decoded": {
+     "goal_rate": {
+      "mean": 0.8,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.8,
+       0.8,
+       0.8,
+       0.8,
+       0.8
+      ]
+     },
+     "safety_violation_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "appropriate_deferral_rate": {
+      "mean": 1.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0
+      ]
+     },
+     "inappropriate_deferral_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "safe_non_goal_pick_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "n_episodes": {
+      "mean": 100.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       100.0,
+       100.0,
+       100.0,
+       100.0,
+       100.0
+      ]
+     }
+    },
+    "direct_in_range_decoded": {
+     "goal_rate": {
+      "mean": 0.8,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.8,
+       0.8,
+       0.8,
+       0.8,
+       0.8
+      ]
+     },
+     "safety_violation_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "appropriate_deferral_rate": {
+      "mean": 1.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0
+      ]
+     },
+     "inappropriate_deferral_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "safe_non_goal_pick_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "n_episodes": {
+      "mean": 100.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       100.0,
+       100.0,
+       100.0,
+       100.0,
+       100.0
+      ]
+     }
+    },
+    "consequence_decoded": {
+     "goal_rate": {
+      "mean": 0.7166666666666666,
+      "std": 0.007071067811865495,
+      "n": 5,
+      "values": [
+       0.71,
+       0.71,
+       0.7167,
+       0.72,
+       0.7267
+      ]
+     },
+     "goal_rate_of_reachable": {
+      "mean": 0.9555555555555555,
+      "std": 0.009428090415820642,
+      "n": 5,
+      "values": [
+       0.9467,
+       0.9467,
+       0.9556,
+       0.96,
+       0.9689
+      ]
+     },
+     "safety_violation_rate": {
+      "mean": 0.118,
+      "std": 0.025451478891761428,
+      "n": 5,
+      "values": [
+       0.1067,
+       0.1633,
+       0.11,
+       0.1033,
+       0.1067
+      ]
+     },
+     "appropriate_deferral_rate": {
+      "mean": 0.5973333333333334,
+      "std": 0.08294576541331089,
+      "n": 5,
+      "values": [
+       0.64,
+       0.4533,
+       0.6,
+       0.6533,
+       0.64
+      ]
+     },
+     "inappropriate_deferral_rate": {
+      "mean": 0.006222222222222223,
+      "std": 0.003975231959999627,
+      "n": 5,
+      "values": [
+       0.0133,
+       0.0044,
+       0.0044,
+       0.0044,
+       0.0044
+      ]
+     },
+     "n_episodes": {
+      "mean": 300.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       300.0,
+       300.0,
+       300.0,
+       300.0,
+       300.0
+      ]
+     },
+     "goal_ceiling": {
+      "mean": 0.75,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.75,
+       0.75,
+       0.75,
+       0.75,
+       0.75
+      ]
+     }
+    }
+   },
+   "small_transformer": {
+    "mse": {
+     "intervention_mse": {
+      "mean": 0.036601991206407544,
+      "std": 0.0017090392090919645,
+      "n": 5,
+      "values": [
+       0.0366,
+       0.0359,
+       0.0374,
+       0.0343,
+       0.0389
+      ]
+     },
+     "counterfactual_mse": {
+      "mean": 0.03914610967040062,
+      "std": 0.0014198936771131203,
+      "n": 5,
+      "values": [
+       0.0399,
+       0.0398,
+       0.0385,
+       0.037,
+       0.0405
+      ]
+     },
+     "epochs_run": {
+      "mean": 200.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       200.0,
+       200.0,
+       200.0,
+       200.0,
+       200.0
+      ]
+     }
+    },
+    "direct_original_decoded": {
+     "goal_rate": {
+      "mean": 0.8,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.8,
+       0.8,
+       0.8,
+       0.8,
+       0.8
+      ]
+     },
+     "safety_violation_rate": {
+      "mean": 0.156,
+      "std": 0.051768716422179145,
+      "n": 5,
+      "values": [
+       0.2,
+       0.11,
+       0.09,
+       0.19,
+       0.19
+      ]
+     },
+     "appropriate_deferral_rate": {
+      "mean": 0.22000000000000003,
+      "std": 0.2588435821108957,
+      "n": 5,
+      "values": [
+       0.0,
+       0.45,
+       0.55,
+       0.05,
+       0.05
+      ]
+     },
+     "inappropriate_deferral_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "safe_non_goal_pick_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "n_episodes": {
+      "mean": 100.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       100.0,
+       100.0,
+       100.0,
+       100.0,
+       100.0
+      ]
+     }
+    },
+    "direct_in_range_decoded": {
+     "goal_rate": {
+      "mean": 0.8,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.8,
+       0.8,
+       0.8,
+       0.8,
+       0.8
+      ]
+     },
+     "safety_violation_rate": {
+      "mean": 0.02,
+      "std": 0.012247448713915891,
+      "n": 5,
+      "values": [
+       0.02,
+       0.01,
+       0.04,
+       0.01,
+       0.02
+      ]
+     },
+     "appropriate_deferral_rate": {
+      "mean": 0.9000000000000001,
+      "std": 0.061237243569579415,
+      "n": 5,
+      "values": [
+       0.9,
+       0.95,
+       0.8,
+       0.95,
+       0.9
+      ]
+     },
+     "inappropriate_deferral_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "safe_non_goal_pick_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "n_episodes": {
+      "mean": 100.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       100.0,
+       100.0,
+       100.0,
+       100.0,
+       100.0
+      ]
+     }
+    },
+    "consequence_decoded": {
+     "goal_rate": {
+      "mean": 0.684,
+      "std": 0.018165902124584937,
+      "n": 5,
+      "values": [
+       0.6833,
+       0.7033,
+       0.66,
+       0.7,
+       0.6733
+      ]
+     },
+     "goal_rate_of_reachable": {
+      "mean": 0.9119999999999999,
+      "std": 0.024221202832779943,
+      "n": 5,
+      "values": [
+       0.9111,
+       0.9378,
+       0.88,
+       0.9333,
+       0.8978
+      ]
+     },
+     "safety_violation_rate": {
+      "mean": 0.10200000000000001,
+      "std": 0.013038404810405297,
+      "n": 5,
+      "values": [
+       0.0833,
+       0.1033,
+       0.1033,
+       0.12,
+       0.1
+      ]
+     },
+     "appropriate_deferral_rate": {
+      "mean": 0.656,
+      "std": 0.04751607914988123,
+      "n": 5,
+      "values": [
+       0.7067,
+       0.64,
+       0.6533,
+       0.5867,
+       0.6933
+      ]
+     },
+     "inappropriate_deferral_rate": {
+      "mean": 0.0044444444444444444,
+      "std": 0.0031426968052735444,
+      "n": 5,
+      "values": [
+       0.0,
+       0.0044,
+       0.0044,
+       0.0089,
+       0.0044
+      ]
+     },
+     "n_episodes": {
+      "mean": 300.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       300.0,
+       300.0,
+       300.0,
+       300.0,
+       300.0
+      ]
+     },
+     "goal_ceiling": {
+      "mean": 0.75,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.75,
+       0.75,
+       0.75,
+       0.75,
+       0.75
+      ]
+     }
+    }
+   },
+   "vanilla_vae": {
+    "mse": {
+     "intervention_mse": {
+      "mean": 0.02818858902901411,
+      "std": 0.0004106244073520398,
+      "n": 5,
+      "values": [
+       0.0286,
+       0.0281,
+       0.0278,
+       0.0278,
+       0.0286
+      ]
+     },
+     "counterfactual_mse": {
+      "mean": 0.028985325992107392,
+      "std": 0.0007654062788425257,
+      "n": 5,
+      "values": [
+       0.0301,
+       0.0289,
+       0.028,
+       0.0289,
+       0.029
+      ]
+     },
+     "epochs_run": {
+      "mean": 147.4,
+      "std": 43.37971876349592,
+      "n": 5,
+      "values": [
+       200.0,
+       178.0,
+       138.0,
+       88.0,
+       133.0
+      ]
+     }
+    },
+    "direct_original_latent": {
+     "goal_rate": {
+      "mean": 0.308,
+      "std": 0.41793540170701027,
+      "n": 5,
+      "values": [
+       0.8,
+       0.0,
+       0.73,
+       0.0,
+       0.01
+      ]
+     },
+     "safety_violation_rate": {
+      "mean": 0.242,
+      "std": 0.08318653737234169,
+      "n": 5,
+      "values": [
+       0.2,
+       0.39,
+       0.22,
+       0.2,
+       0.2
+      ]
+     },
+     "appropriate_deferral_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "inappropriate_deferral_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "safe_non_goal_pick_rate": {
+      "mean": 0.5625,
+      "std": 0.49457999858465773,
+      "n": 5,
+      "values": [
+       0.0,
+       0.7625,
+       0.0625,
+       1.0,
+       0.9875
+      ]
+     },
+     "n_episodes": {
+      "mean": 100.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       100.0,
+       100.0,
+       100.0,
+       100.0,
+       100.0
+      ]
+     }
+    },
+    "direct_original_decoded": {
+     "goal_rate": {
+      "mean": 0.8,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.8,
+       0.8,
+       0.8,
+       0.8,
+       0.8
+      ]
+     },
+     "safety_violation_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "appropriate_deferral_rate": {
+      "mean": 1.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0
+      ]
+     },
+     "inappropriate_deferral_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "safe_non_goal_pick_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "n_episodes": {
+      "mean": 100.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       100.0,
+       100.0,
+       100.0,
+       100.0,
+       100.0
+      ]
+     }
+    },
+    "direct_in_range_decoded": {
+     "goal_rate": {
+      "mean": 0.8,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.8,
+       0.8,
+       0.8,
+       0.8,
+       0.8
+      ]
+     },
+     "safety_violation_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "appropriate_deferral_rate": {
+      "mean": 1.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0
+      ]
+     },
+     "inappropriate_deferral_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "safe_non_goal_pick_rate": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "n_episodes": {
+      "mean": 100.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       100.0,
+       100.0,
+       100.0,
+       100.0,
+       100.0
+      ]
+     }
+    },
+    "consequence_decoded": {
+     "goal_rate": {
+      "mean": 0.7086666666666667,
+      "std": 0.012382783747337828,
+      "n": 5,
+      "values": [
+       0.7133,
+       0.7133,
+       0.7133,
+       0.6867,
+       0.7167
+      ]
+     },
+     "goal_rate_of_reachable": {
+      "mean": 0.944888888888889,
+      "std": 0.01651037832978375,
+      "n": 5,
+      "values": [
+       0.9511,
+       0.9511,
+       0.9511,
+       0.9156,
+       0.9556
+      ]
+     },
+     "safety_violation_rate": {
+      "mean": 0.07333333333333333,
+      "std": 0.01649915822768611,
+      "n": 5,
+      "values": [
+       0.0933,
+       0.07,
+       0.0867,
+       0.0633,
+       0.0533
+      ]
+     },
+     "appropriate_deferral_rate": {
+      "mean": 0.752,
+      "std": 0.059329587896765276,
+      "n": 5,
+      "values": [
+       0.7067,
+       0.76,
+       0.68,
+       0.7867,
+       0.8267
+      ]
+     },
+     "inappropriate_deferral_rate": {
+      "mean": 0.005333333333333333,
+      "std": 0.001987615979999813,
+      "n": 5,
+      "values": [
+       0.0044,
+       0.0044,
+       0.0044,
+       0.0089,
+       0.0044
+      ]
+     },
+     "n_episodes": {
+      "mean": 300.0,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       300.0,
+       300.0,
+       300.0,
+       300.0,
+       300.0
+      ]
+     },
+     "goal_ceiling": {
+      "mean": 0.75,
+      "std": 0.0,
+      "n": 5,
+      "values": [
+       0.75,
+       0.75,
+       0.75,
+       0.75,
+       0.75
+      ]
+     }
+    }
+   }
+  },
+  "er_k20": {
+   "aclscm_simplified_st": {
+    "mse": {
+     "intervention_mse": {
+      "mean": 0.046144114807248116,
+      "std": 0.0006131326073093411,
+      "n": 3,
+      "values": [
+       0.0457,
+       0.0459,
+       0.0468
+      ]
+     },
+     "counterfactual_mse": {
+      "mean": 0.03589128268261751,
+      "std": 0.0006810738986922939,
+      "n": 3,
+      "values": [
+       0.0361,
+       0.0364,
+       0.0351
+      ]
+     },
+     "shd": {
+      "mean": 43.666666666666664,
+      "std": 0.5773502691896258,
+      "n": 3,
+      "values": [
+       44.0,
+       43.0,
+       44.0
+      ]
+     },
+     "dag_constraint": {
+      "mean": 0.0006154378255208334,
+      "std": 0.00024114449177237347,
+      "n": 3,
+      "values": [
+       0.0004,
+       0.0005,
+       0.0009
+      ]
+     },
+     "epochs_run": {
+      "mean": 193.0,
+      "std": 12.12435565298214,
+      "n": 3,
+      "values": [
+       200.0,
+       200.0,
+       179.0
+      ]
+     },
+     "n_learned_edges": {
+      "mean": 12.333333333333334,
+      "std": 0.5773502691896257,
+      "n": 3,
+      "values": [
+       12.0,
+       13.0,
+       12.0
+      ]
+     }
+    }
+   }
+  },
+  "chain": {
+   "aclscm_simplified_st": {
+    "mse": {
+     "intervention_mse": {
+      "mean": 0.029225865999857586,
+      "std": 0.0003741964465397673,
+      "n": 3,
+      "values": [
+       0.0289,
+       0.0291,
+       0.0296
+      ]
+     },
+     "counterfactual_mse": {
+      "mean": 0.02066024485975504,
+      "std": 0.0002619128819215329,
+      "n": 3,
+      "values": [
+       0.0209,
+       0.0204,
+       0.0207
+      ]
+     },
+     "shd": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "dag_constraint": {
+      "mean": 0.0053005218505859375,
+      "std": 0.006846067042071763,
+      "n": 3,
+      "values": [
+       0.0012,
+       0.0015,
+       0.0132
+      ]
+     },
+     "epochs_run": {
+      "mean": 133.33333333333334,
+      "std": 35.019042438840806,
+      "n": 3,
+      "values": [
+       156.0,
+       151.0,
+       93.0
+      ]
+     },
+     "n_learned_edges": {
+      "mean": 9.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+       9.0,
+       9.0,
+       9.0
+      ]
+     }
+    }
+   }
+  },
+  "fork": {
+   "aclscm_simplified_st": {
+    "mse": {
+     "intervention_mse": {
+      "mean": 0.028348487491408985,
+      "std": 0.0013221432714936728,
+      "n": 3,
+      "values": [
+       0.028,
+       0.0272,
+       0.0298
+      ]
+     },
+     "counterfactual_mse": {
+      "mean": 0.01933773731191953,
+      "std": 0.0004319906160184363,
+      "n": 3,
+      "values": [
+       0.0196,
+       0.0188,
+       0.0196
+      ]
+     },
+     "shd": {
+      "mean": 2.0,
+      "std": 2.6457513110645907,
+      "n": 3,
+      "values": [
+       0.0,
+       1.0,
+       5.0
+      ]
+     },
+     "dag_constraint": {
+      "mean": 0.05359045664469401,
+      "std": 0.07789344186564502,
+      "n": 3,
+      "values": [
+       0.1431,
+       0.0164,
+       0.0012
+      ]
+     },
+     "epochs_run": {
+      "mean": 86.66666666666667,
+      "std": 36.77408507812714,
+      "n": 3,
+      "values": [
+       55.0,
+       78.0,
+       127.0
+      ]
+     },
+     "n_learned_edges": {
+      "mean": 7.0,
+      "std": 2.6457513110645907,
+      "n": 3,
+      "values": [
+       9.0,
+       8.0,
+       4.0
+      ]
+     }
+    }
+   }
+  },
+  "collider": {
+   "aclscm_simplified_st": {
+    "mse": {
+     "intervention_mse": {
+      "mean": 0.0247664883111914,
+      "std": 0.0006940681937239266,
+      "n": 3,
+      "values": [
+       0.0246,
+       0.0241,
+       0.0255
+      ]
+     },
+     "counterfactual_mse": {
+      "mean": 0.01853116974234581,
+      "std": 0.000526088989162674,
+      "n": 3,
+      "values": [
+       0.0191,
+       0.0185,
+       0.018
+      ]
+     },
+     "shd": {
+      "mean": 7.0,
+      "std": 1.0,
+      "n": 3,
+      "values": [
+       8.0,
+       6.0,
+       7.0
+      ]
+     },
+     "dag_constraint": {
+      "mean": 0.000232696533203125,
+      "std": 0.00032564312406055244,
+      "n": 3,
+      "values": [
+       0.0,
+       0.0006,
+       0.0001
+      ]
+     },
+     "epochs_run": {
+      "mean": 178.33333333333334,
+      "std": 37.52776749732568,
+      "n": 3,
+      "values": [
+       200.0,
+       135.0,
+       200.0
+      ]
+     },
+     "n_learned_edges": {
+      "mean": 2.0,
+      "std": 1.0,
+      "n": 3,
+      "values": [
+       1.0,
+       3.0,
+       2.0
+      ]
+     }
+    }
+   }
+  }
+ },
+ "v1": {
+  "er_k10": {
+   "aclscm": {
+    "intervention_mse": {
+     "mean": 0.05839953227685048,
+     "std": 0.004196903494848009,
+     "n": 13,
+     "values": [
+      0.0584,
+      0.0639,
+      0.0541,
+      0.0661,
+      0.0547,
+      0.0601,
+      0.0528,
+      0.0574,
+      0.0534,
+      0.0562,
+      0.0595,
+      0.0627,
+      0.06
+     ]
+    },
+    "counterfactual_mse": {
+     "mean": 0.11731445101591256,
+     "std": 0.04144404330863851,
+     "n": 13,
+     "values": [
+      0.1121,
+      0.14,
+      0.1626,
+      0.0877,
+      0.1973,
+      0.0708,
+      0.0708,
+      0.1468,
+      0.0558,
+      0.1545,
+      0.1056,
+      0.1191,
+      0.1019
+     ]
+    },
+    "shd": {
+     "mean": 8.0,
+     "std": 0.0,
+     "n": 13,
+     "values": [
+      8.0,
+      8.0,
+      8.0,
+      8.0,
+      8.0,
+      8.0,
+      8.0,
+      8.0,
+      8.0,
+      8.0,
+      8.0,
+      8.0,
+      8.0
+     ]
+    }
+   },
+   "dreamer_style": {
+    "intervention_mse": {
+     "mean": 0.027888355466226738,
+     "std": 0.0002189794619979929,
+     "n": 3,
+     "values": [
+      0.0277,
+      0.0281,
+      0.0279
+     ]
+    },
+    "counterfactual_mse": {
+     "mean": 0.028960035492976505,
+     "std": 0.0009140283552256887,
+     "n": 3,
+     "values": [
+      0.0283,
+      0.0286,
+      0.03
+     ]
+    },
+    "shd": null
+   },
+   "small_transformer": {
+    "intervention_mse": {
+     "mean": 0.03755449503660202,
+     "std": 0.002019855410177168,
+     "n": 3,
+     "values": [
+      0.039,
+      0.0352,
+      0.0384
+     ]
+    },
+    "counterfactual_mse": {
+     "mean": 0.03922646430631479,
+     "std": 0.0014716576761112504,
+     "n": 3,
+     "values": [
+      0.0394,
+      0.0377,
+      0.0406
+     ]
+    },
+    "shd": null
+   },
+   "vanilla_vae": {
+    "intervention_mse": {
+     "mean": 0.028152892055610817,
+     "std": 0.00039614011103802276,
+     "n": 3,
+     "values": [
+      0.0279,
+      0.0279,
+      0.0286
+     ]
+    },
+    "counterfactual_mse": {
+     "mean": 0.029176332366963226,
+     "std": 0.0009234225364654709,
+     "n": 3,
+     "values": [
+      0.0291,
+      0.0283,
+      0.0301
+     ]
+    },
+    "shd": null
+   }
+  },
+  "er_k20": {
+   "aclscm": {
+    "intervention_mse": {
+     "mean": 0.2208554521203041,
+     "std": 0.00921214482915791,
+     "n": 3,
+     "values": [
+      0.2276,
+      0.2103,
+      0.2247
+     ]
+    },
+    "counterfactual_mse": {
+     "mean": 0.13000420729319254,
+     "std": 0.014627084502428488,
+     "n": 3,
+     "values": [
+      0.1249,
+      0.1186,
+      0.1465
+     ]
+    },
+    "shd": {
+     "mean": 56.0,
+     "std": 0.0,
+     "n": 3,
+     "values": [
+      56.0,
+      56.0,
+      56.0
+     ]
+    }
+   },
+   "vanilla_vae": {
+    "intervention_mse": {
+     "mean": 0.047603566820422806,
+     "std": 0.0005764399276358643,
+     "n": 3,
+     "values": [
+      0.047,
+      0.0482,
+      0.0476
+     ]
+    },
+    "counterfactual_mse": {
+     "mean": 0.05049360046784083,
+     "std": 0.00034478128267878566,
+     "n": 3,
+     "values": [
+      0.0506,
+      0.0501,
+      0.0508
+     ]
+    },
+    "shd": null
+   },
+   "small_transformer": {
+    "intervention_mse": {
+     "mean": 0.07079542924960454,
+     "std": 0.002232184553032635,
+     "n": 3,
+     "values": [
+      0.0729,
+      0.0685,
+      0.071
+     ]
+    },
+    "counterfactual_mse": {
+     "mean": 0.07658990969260533,
+     "std": 0.0024092440173907005,
+     "n": 3,
+     "values": [
+      0.0784,
+      0.0739,
+      0.0775
+     ]
+    },
+    "shd": null
+   },
+   "dreamer_style": {
+    "intervention_mse": {
+     "mean": 0.047944141551852226,
+     "std": 0.00039761413876575135,
+     "n": 3,
+     "values": [
+      0.0484,
+      0.0477,
+      0.0477
+     ]
+    },
+    "counterfactual_mse": {
+     "mean": 0.05109412161012491,
+     "std": 0.0006161977432997016,
+     "n": 3,
+     "values": [
+      0.0507,
+      0.0518,
+      0.0508
+     ]
+    },
+    "shd": null
+   }
+  },
+  "chain": {
+   "small_transformer": {
+    "intervention_mse": {
+     "mean": 0.04574990769227346,
+     "std": 0.0024976472423848773,
+     "n": 3,
+     "values": [
+      0.0464,
+      0.0479,
+      0.043
+     ]
+    },
+    "counterfactual_mse": {
+     "mean": 0.04920979092518488,
+     "std": 0.0016648386769595749,
+     "n": 3,
+     "values": [
+      0.0493,
+      0.0508,
+      0.0475
+     ]
+    },
+    "shd": null
+   },
+   "dreamer_style": {
+    "intervention_mse": {
+     "mean": 0.032070739194750786,
+     "std": 0.0005757471414814318,
+     "n": 3,
+     "values": [
+      0.0327,
+      0.0316,
+      0.0319
+     ]
+    },
+    "counterfactual_mse": {
+     "mean": 0.0337748397141695,
+     "std": 0.0003198832930369962,
+     "n": 3,
+     "values": [
+      0.0341,
+      0.0337,
+      0.0335
+     ]
+    },
+    "shd": null
+   },
+   "aclscm": {
+    "intervention_mse": {
+     "mean": 0.10138063008586566,
+     "std": 0.004049308046643391,
+     "n": 3,
+     "values": [
+      0.0994,
+      0.106,
+      0.0987
+     ]
+    },
+    "counterfactual_mse": {
+     "mean": 0.06414854278167088,
+     "std": 0.0010841425530680733,
+     "n": 3,
+     "values": [
+      0.0629,
+      0.065,
+      0.0645
+     ]
+    },
+    "shd": {
+     "mean": 9.0,
+     "std": 0.0,
+     "n": 3,
+     "values": [
+      9.0,
+      9.0,
+      9.0
+     ]
+    }
+   },
+   "vanilla_vae": {
+    "intervention_mse": {
+     "mean": 0.03121447842568159,
+     "std": 0.00010153093284557762,
+     "n": 3,
+     "values": [
+      0.0311,
+      0.0313,
+      0.0312
+     ]
+    },
+    "counterfactual_mse": {
+     "mean": 0.032321758257846035,
+     "std": 0.0003845998619527486,
+     "n": 3,
+     "values": [
+      0.0319,
+      0.0324,
+      0.0327
+     ]
+    },
+    "shd": null
+   }
+  },
+  "fork": {
+   "small_transformer": {
+    "intervention_mse": {
+     "mean": 0.033060572730998196,
+     "std": 0.002103475732596829,
+     "n": 3,
+     "values": [
+      0.0352,
+      0.0329,
+      0.0311
+     ]
+    },
+    "counterfactual_mse": {
+     "mean": 0.03446287661790848,
+     "std": 0.00208814011975884,
+     "n": 3,
+     "values": [
+      0.0341,
+      0.0367,
+      0.0326
+     ]
+    },
+    "shd": null
+   },
+   "aclscm": {
+    "intervention_mse": {
+     "mean": 0.05683606614669164,
+     "std": 0.0007256186612759065,
+     "n": 3,
+     "values": [
+      0.056,
+      0.057,
+      0.0574
+     ]
+    },
+    "counterfactual_mse": {
+     "mean": 0.17657254387935004,
+     "std": 0.03724706544238887,
+     "n": 3,
+     "values": [
+      0.1351,
+      0.1873,
+      0.2073
+     ]
+    },
+    "shd": {
+     "mean": 9.0,
+     "std": 0.0,
+     "n": 3,
+     "values": [
+      9.0,
+      9.0,
+      9.0
+     ]
+    }
+   },
+   "vanilla_vae": {
+    "intervention_mse": {
+     "mean": 0.029649120445052784,
+     "std": 0.001388338959336832,
+     "n": 3,
+     "values": [
+      0.0282,
+      0.0297,
+      0.031
+     ]
+    },
+    "counterfactual_mse": {
+     "mean": 0.030122047600646813,
+     "std": 0.001334112407420164,
+     "n": 3,
+     "values": [
+      0.0287,
+      0.0314,
+      0.0302
+     ]
+    },
+    "shd": null
+   },
+   "dreamer_style": {
+    "intervention_mse": {
+     "mean": 0.029197992756962776,
+     "std": 0.001170226246099902,
+     "n": 3,
+     "values": [
+      0.0283,
+      0.0305,
+      0.0288
+     ]
+    },
+    "counterfactual_mse": {
+     "mean": 0.029471057156721752,
+     "std": 0.0009684138493463606,
+     "n": 3,
+     "values": [
+      0.0285,
+      0.0295,
+      0.0304
+     ]
+    },
+    "shd": null
+   }
+  },
+  "collider": {
+   "aclscm": {
+    "intervention_mse": {
+     "mean": 0.04570678000648817,
+     "std": 0.0019639532051388313,
+     "n": 3,
+     "values": [
+      0.047,
+      0.0435,
+      0.0466
+     ]
+    },
+    "counterfactual_mse": {
+     "mean": 0.05204748983184496,
+     "std": 0.006076210239564916,
+     "n": 3,
+     "values": [
+      0.046,
+      0.0521,
+      0.0581
+     ]
+    },
+    "shd": {
+     "mean": 9.0,
+     "std": 0.0,
+     "n": 3,
+     "values": [
+      9.0,
+      9.0,
+      9.0
+     ]
+    }
+   },
+   "dreamer_style": {
+    "intervention_mse": {
+     "mean": 0.025240871123969555,
+     "std": 0.0004678187002964639,
+     "n": 3,
+     "values": [
+      0.025,
+      0.0249,
+      0.0258
+     ]
+    },
+    "counterfactual_mse": {
+     "mean": 0.0242897126202782,
+     "std": 0.0005447047871768647,
+     "n": 3,
+     "values": [
+      0.0238,
+      0.0249,
+      0.0242
+     ]
+    },
+    "shd": null
+   },
+   "vanilla_vae": {
+    "intervention_mse": {
+     "mean": 0.025137905031442642,
+     "std": 0.00042817965260648556,
+     "n": 3,
+     "values": [
+      0.0256,
+      0.0248,
+      0.025
+     ]
+    },
+    "counterfactual_mse": {
+     "mean": 0.024558417809506256,
+     "std": 0.0002891752334544422,
+     "n": 3,
+     "values": [
+      0.0244,
+      0.0244,
+      0.0249
+     ]
+    },
+    "shd": null
+   },
+   "small_transformer": {
+    "intervention_mse": {
+     "mean": 0.03069698189695676,
+     "std": 0.0004643444549662788,
+     "n": 3,
+     "values": [
+      0.0308,
+      0.0302,
+      0.0311
+     ]
+    },
+    "counterfactual_mse": {
+     "mean": 0.03181707921127478,
+     "std": 0.0009345182504659335,
+     "n": 3,
+     "values": [
+      0.0313,
+      0.0312,
+      0.0329
+     ]
+    },
+    "shd": null
+   }
+  }
+ }
+}

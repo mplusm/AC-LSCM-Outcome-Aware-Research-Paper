@@ -43,7 +43,11 @@ def dag_loss(
     A_fp32 = A.float()
     sparsity = A_fp32.abs().sum()
 
-    if acyclicity == "notears":
+    if acyclicity == "none":
+        # Lagged-only graphs (parents at t, children at t+1) are acyclic by
+        # construction, so only the sparsity term is needed.
+        h = torch.zeros((), device=A.device)
+    elif acyclicity == "notears":
         h = torch.trace(torch.matrix_exp(A_fp32 * A_fp32)) - K
     elif acyclicity == "dagma":
         s = 1.0
@@ -62,8 +66,11 @@ def contrastive_loss(
     z_tp1_cf_true: torch.Tensor,
     z_tp1_factual: torch.Tensor,
     margin: float = 1.0,
+    use_hinge: bool = True,
 ) -> torch.Tensor:
     supervised = F.mse_loss(z_tp1_cf_pred, z_tp1_cf_true)
+    if not use_hinge:
+        return supervised
     hinge = F.relu(margin - (z_tp1_cf_pred - z_tp1_factual).pow(2).sum(dim=-1)).mean()
     return supervised + hinge
 
@@ -84,6 +91,8 @@ def composite_loss(
     beta_3: float = 0.5,
     beta_4: float = 1.0,
     acyclicity: str = "notears",
+    lambda1: float = 0.1,
+    use_hinge: bool = True,
 ) -> dict:
     losses = {}
 
@@ -95,12 +104,13 @@ def composite_loss(
         losses["transition"] = torch.tensor(0.0, device=x_tp1.device)
 
     if A is not None and beta_3 > 0.0:
-        losses["dag"] = dag_loss(A, K, acyclicity=acyclicity)
+        losses["dag"] = dag_loss(A, K, lambda1=lambda1, acyclicity=acyclicity)
     else:
         losses["dag"] = torch.tensor(0.0, device=x_tp1.device)
 
     if z_tp1_cf_pred is not None and z_tp1_cf_true is not None and z_tp1_factual is not None and beta_4 > 0.0:
-        losses["contrastive"] = contrastive_loss(z_tp1_cf_pred, z_tp1_cf_true, z_tp1_factual)
+        losses["contrastive"] = contrastive_loss(z_tp1_cf_pred, z_tp1_cf_true, z_tp1_factual,
+                                                 use_hinge=use_hinge)
     else:
         losses["contrastive"] = torch.tensor(0.0, device=x_tp1.device)
 

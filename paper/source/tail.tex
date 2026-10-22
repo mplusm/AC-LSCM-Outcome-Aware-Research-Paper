@@ -1,0 +1,213 @@
+\section{Related Work}
+
+\paragraph{Latent world models and planning.}
+Ha and Schmidhuber~\citep{ha2018world} established the template of learning a
+compressed latent dynamics model and acting through it. PlaNet~\citep{hafner2019planet}
+planned directly in a learned latent space, the Dreamer line~\citep{hafner2023dreamerv3}
+scaled latent imagination to diverse domains, and MuZero~\citep{schrittwieser2020muzero}
+showed that a learned model is sufficient for strong planning. These models
+treat the action as an input to a monolithic transition. AC-LSCM instead
+factorizes the transition per latent factor over a learned sparse graph and
+treats actions as interventions that replace individual mechanisms.
+
+\paragraph{Causal structure in dynamics models.}
+Causal Dynamics Learning~\citep{wang2022cdl} learns a sparse causal graph
+between state variables and actions in order to obtain task-independent state
+abstractions, and Ke et al.~\citep{ke2021systematic} systematically evaluate
+causal-discovery-based world models in model-based reinforcement learning.
+The simplified AC-LSCM is close in spirit to these works: a sparse, lagged
+graph over state factors learned jointly with per-factor mechanisms.
+
+\paragraph{Causal representation learning.}
+Sch\"olkopf et al.~\citep{scholkopf2021causal} survey the program of learning
+representations aligned with causal mechanisms. CITRIS~\citep{lippe2022citris}
+proves identifiability of causal factors from temporal sequences with known
+intervention targets, which is the regime of our experiments; mechanism
+sparsity~\citep{lachapelle2022disentanglement} and weak supervision from
+paired interventions~\citep{brehmer2022weakly} provide related guarantees.
+We do not contribute identifiability results; our encoder is a plain MLP and
+our latents are anchored by the known action targets.
+
+\paragraph{Continuous DAG learning.}
+NOTEARS~\citep{zheng2018notears} reformulated DAG learning as continuous
+optimization with a smooth acyclicity function, and DAGMA~\citep{bello2022dagma}
+improved its numerical behaviour with a log-determinant characterization.
+Our negative result is specific to how these penalties were combined with a
+relaxed adjacency and a sparsity term in a lagged model: there, the
+acyclicity term is unnecessary and, with the original weights, the combined
+penalty removed every edge.
+
+\paragraph{Safe action selection.}
+Shielding~\citep{alshiekh2018shielding} blocks actions whose consequences
+would violate a formal safety specification, using a model of the environment.
+Algorithm~\ref{alg:planning} is a learned, approximate analogue: the shield is
+the safety predicate evaluated on the forward model's simulated trajectory,
+with deferral when no action passes.
+
+\paragraph{World models and risk for LLM agents.}
+RAP~\citep{hao2023rap} uses an LLM as its own world model for planning, and
+WebDreamer~\citep{gu2024webdreamer} uses an LLM to simulate the outcome of
+candidate web actions before executing them. ToolEmu~\citep{ruan2024toolemu}
+uses an LM-emulated sandbox to identify risky agent actions. These systems
+obtain the forward model from the language model itself; our question is what
+structure a forward model needs in order to get the consequences of
+interventions right, studied in a setting where ground truth is available.
+CLadder~\citep{jin2023cladder} and CounterBench~\citep{chen2025counterbench}
+document weaknesses of current LLMs on formal causal queries and motivate the
+problem, but we have not evaluated on them.
+
+\section{Limitations and Open Questions}
+\label{sec:limitations}
+
+\paragraph{Synthetic, low-dimensional setting.}
+All results are on synthetic SCMs with $K \le 20$ scalar factors, observations
+that are a noisy copy of the latent state, single-factor actions with known
+targets, and small MLPs. The ground-truth mechanisms are additive-noise and
+lagged, which is exactly the model class of the simplified AC-LSCM. Whether
+the gains survive richer observations, unknown intervention targets,
+instantaneous effects, or misspecified mechanisms is untested.
+
+\paragraph{No language-domain evaluation.}
+We have not connected AC-LSCM to a language model or evaluated it on
+text-based agent tasks or causal-reasoning benchmarks. The paper's motivation
+concerns LLM agents; its evidence concerns forward models in synthetic
+environments. Bridging that gap is the most important open step.
+
+\paragraph{Counterfactual supervision.}
+The counterfactual loss requires ground-truth counterfactual latents, which
+are available only in simulation and give AC-LSCM information about the true
+state coordinates that the baselines do not receive. Without it, AC-LSCM's
+consequence-task safety is on par with the best baseline
+(Sections~\ref{sec:consequence} and~\ref{sec:ablations}).
+
+\paragraph{Task design.}
+The consequence task uses one hand-chosen safety factor and one goal factor
+on one graph, a fixed horizon of three steps, and candidate sets constructed
+so that a fixed fraction of episodes has no safe action. Candidates whose
+realized outcome falls within a margin of a threshold are excluded so that
+labels are decided by the action rather than by noise. Other choices would
+give different absolute numbers.
+
+\paragraph{Evaluation protocol.}
+Early stopping uses a validation split taken from the training trajectory.
+The simplified model's settings came from the first-version ablations, one
+short pilot run, and one further change (the straight-through mask) chosen on
+prediction error after its first full runs; no setting was tuned on the agent
+tasks, and the baselines keep the hyperparameters of the first version. The
+agent-task configurations themselves (thresholds, horizon, margin, candidate
+counts) were fixed once using only the oracle and two model-free reference
+predictors.
+
+\section{Conclusion}
+
+Agents that act on real systems should predict what their actions will cause
+before acting. We studied a structured forward model for this purpose and,
+re-examining an earlier version of this work, found that its original
+specification learned no causal structure and that its headline agent result
+measured extrapolation of action values rather than modeling of consequences.
+With those problems fixed, the evidence is narrower and, we believe, more
+useful. A factorized, intervention-aware forward model gives the best
+counterfactual predictions in our synthetic setting. In planning, what
+matters is whether the model captures the indirect paths that lead to unsafe
+states: a model that keeps all true edges matches an oracle, a model that
+prunes one weak edge into the safety factor loses much of that advantage, and
+the explicit do-operator contributes nothing measurable. Without ground-truth
+counterfactual supervision, the architecture is on par with a well-tuned
+unstructured latent model. For safety-critical use this argues for
+conservative (denser) structure and for evaluation protocols that test
+downstream consequences, in range of the training data, with every model
+judged in the same space. Connecting such forward models to language-model
+agents remains future work.
+
+
+\section*{Code and Reproducibility}
+Code, configurations, per-seed result files, and the scripts that produce
+every table are available at
+\url{https://github.com/mplusm/AC-LSCM-Outcome-Aware-Research-Paper}.
+The first-version experiments ran on a single NVIDIA Tesla T4 in fp32
+(under 50 GPU-hours). The experiments added in this version ran on a
+4-core CPU. All runs use deterministic seeding.
+
+\section*{Acknowledgments}
+The author thanks the open research community working on causal
+representation learning, world models, and agent safety, whose published
+work and benchmarks made this study possible.
+
+\input{refs}
+
+\appendix
+
+\section{Experimental Details}
+\label{app:details}
+
+\paragraph{Data.}
+Each environment is an SCM over $K$ scalar factors with lagged additive-noise
+mechanisms $z^i_{t+1} = \tanh\big(\sum_j W_{ij} z^j_t\big) + \epsilon^i_t$,
+$\epsilon^i_t \sim \mathcal{N}(0, 0.1^2)$, with edge weights drawn uniformly
+from $\pm[0.5, 2]$. Observations are $\x_t = \z_t + \mathcal{N}(0, 0.1^2)$.
+Graphs: chain, fork, and collider with $K=10$, and Erd\H{o}s--R\'enyi graphs
+with edge probability $0.3$ for $K=10$ (8 edges) and $K=20$ (56 edges). Each
+step applies, with probability $0.5$, one intervention $\doop(z^i = v)$ with
+$i$ uniform and $v \sim U(-1.5, 1.5)$. Each training set is one trajectory of
+$N = 10{,}000$ steps; each test set is a separate trajectory of 500 steps.
+Counterfactual targets reuse the same noise with a different random
+single-factor action.
+
+\paragraph{Models.}
+All latent models share an encoder and decoder (two-layer MLPs, hidden size
+128) with a $K$-dimensional latent. AC-LSCM uses one transition MLP per factor
+(input $K{+}1$, hidden size 32) and a Gumbel-sigmoid adjacency with
+temperature $0.5$. Vanilla VAE uses a single MLP transition (hidden 128) on the
+concatenation of latent and action; Dreamer-style uses a GRU cell with hidden
+size $K$. The Transformer embeds each of the $2K$ scalars of $(\x_t, a_t)$ as a
+token ($d = 128$, 2 pre-norm layers, 4 heads, feed-forward 512), mean-pools,
+and predicts $\x_{t+1}$ with an MLP head. Missing action components are
+encoded as $0$ for all baselines.
+
+\paragraph{Optimization.}
+Adam with learning rate $10^{-3}$, batch size 64, gradient clipping at 1.0,
+up to 200 epochs with early stopping (patience 20) on the validation loss.
+Loss weights $\beta = (1, 1, 0.5, 1)$; the graph-loss weight is ramped
+linearly from 0 over the first 50 epochs. Original AC-LSCM: $\lambda_1 = 0.1$,
+$\lambda_2 = 1$ (NOTEARS), adjacency logits initialized at 0, hinge margin
+$\gamma = 1$. Simplified AC-LSCM: $\lambda_1 = 0.01$, $\lambda_2 = 0$, logits
+initialized at $+2$, no hinge, exact abduction, straight-through hard
+Gumbel-sigmoid adjacency samples.
+
+\paragraph{Compute.}
+The experiments of this version (61 training runs) ran on a shared 4-core
+CPU without a GPU; a run of AC-LSCM on ER-10 takes roughly 15 to 45 minutes
+there, and a run of the Transformer roughly 90 minutes.
+
+\paragraph{Metrics.}
+Intervention MSE is the observation-space error of the one-step prediction
+under the logged action on the test trajectory. Counterfactual MSE is the
+error of the counterfactual prediction against the ground-truth
+counterfactual observation. Structural Hamming distance (SHD) counts
+mismatched entries between the thresholded learned adjacency and the true
+one. All tables report the mean and sample standard deviation over seeds.
+
+\section{Relation to the First Version}
+\label{app:v1}
+
+The first version~\citep{madapathi2026zenodo} reported, on the direct-effect
+task with predicates evaluated in latent space, a safety-violation rate of
+$0.005 \pm 0.019$ for AC-LSCM over 13 seeds (8 trained on $N{=}10{,}000$
+samples and 5 on $N{=}2{,}000$, pooled) against $0.180 \pm 0.022$ for the
+Transformer over 3 seeds, and attributed the gain to the do-operator and
+abduction. This version re-runs that task with the same code and finds:
+(i) the original model's graph is empty in every run, so its predictions do
+not depend on the state; (ii) the four ``failed'' seeds of the first version
+(three ``passive'' and one ``mis-ranked'') are an artifact of thresholding
+latents that are not aligned with observation coordinates and disappear when
+predictions are decoded; (iii) the Transformer's violations come from
+extrapolating action values outside the training range; and (iv) the
+do-operator ablation has no effect. The ablation conclusions of the first
+version that the hinge term and the NOTEARS term should be removed are
+confirmed; the claims about the do-operator, about precise structure
+recovery (SHD $8$), and about the $36\times$ safety improvement are withdrawn.
+The first-version per-seed results remain in the repository under
+\texttt{results/}; this version's are under \texttt{results\_v2/}.
+
+
+\end{document}

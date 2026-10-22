@@ -47,6 +47,10 @@ class ACLSCM(nn.Module):
         use_do_operator: bool = True,
         acyclicity: str = "notears",
         gumbel_tau: float = 0.5,
+        init_logit: float = 0.0,
+        exact_abduction: bool = False,
+        hard_gumbel: bool = False,
+        fixed_adjacency=None,
     ):
         super().__init__()
         self.K = K
@@ -54,6 +58,14 @@ class ACLSCM(nn.Module):
         self.use_do_operator = use_do_operator
         self.acyclicity = acyclicity
         self.gumbel_tau = gumbel_tau
+        # exact_abduction: do not add abducted noise to factors that are
+        # intervened on (in either the factual or the counterfactual action),
+        # since do(z_i = v) overrides the exogenous noise of factor i.
+        self.exact_abduction = exact_abduction
+        # hard_gumbel: sample a binary adjacency with a straight-through
+        # estimator during training, so that training and evaluation use the
+        # same kind of mask and the transition MLPs cannot rescale a soft edge.
+        self.hard_gumbel = hard_gumbel
 
         # Encoder: obs_dim → hidden → 2*K (mean + log-var)
         self.encoder = _mlp(obs_dim, hidden_dim, 2 * K)
@@ -62,8 +74,13 @@ class ACLSCM(nn.Module):
         self.decoder = _mlp(K, hidden_dim, obs_dim)
 
         # Learnable adjacency logits (K×K), diagonal zeroed out
-        self.A_logits = nn.Parameter(torch.zeros(K, K))
+        self.A_logits = nn.Parameter(torch.full((K, K), float(init_logit)))
         self._diag_mask = None  # lazy init on device
+        if fixed_adjacency is not None:
+            # Oracle-graph variant: freeze the adjacency at a given graph.
+            fixed = torch.as_tensor(fixed_adjacency, dtype=torch.float32)
+            self.A_logits.data = 20.0 * fixed - 10.0
+            self.A_logits.requires_grad_(False)
 
         # Per-factor transition MLPs: input = K parent values + 1 action value → 1 output
         self.transition_mlps = nn.ModuleList([
@@ -79,7 +96,7 @@ class ACLSCM(nn.Module):
         """Returns soft (training) or hard (eval) adjacency, diagonal zeroed."""
         diag_mask = self._get_diag_mask(self.A_logits.device)
         if self.training and not hard:
-            A = gumbel_sigmoid(self.A_logits, tau=self.gumbel_tau, hard=False) * diag_mask
+            A = gumbel_sigmoid(self.A_logits, tau=self.gumbel_tau, hard=self.hard_gumbel) * diag_mask
         else:
             A = (torch.sigmoid(self.A_logits) > 0.5).float() * diag_mask
         return A
@@ -162,6 +179,9 @@ class ACLSCM(nn.Module):
         z_tp1_pred_factual = self.transition_base(z_t, a_t)
         # Abduction: recover noise
         eps_t = z_tp1_factual - z_tp1_pred_factual
+        if self.exact_abduction:
+            keep = torch.isnan(a_t) & torch.isnan(a_t_cf)
+            eps_t = eps_t * keep.float()
         # Counterfactual prediction with same noise
         z_tp1_cf = self.transition_base(z_t, a_t_cf) + eps_t
         return self.decode(z_tp1_cf), z_tp1_cf

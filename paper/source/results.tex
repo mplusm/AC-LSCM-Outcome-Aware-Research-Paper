@@ -1,0 +1,265 @@
+\section{Experimental Setup}
+\label{sec:setup}
+
+\paragraph{Environments.}
+We generate structural causal models with known ground-truth graphs and
+mechanisms: chain, fork, and collider graphs with $K = 10$ factors, and
+Erd\H{o}s--R\'enyi (ER) graphs with $K = 10$ and $K = 20$. Mechanisms are
+lagged and additive-noise (Appendix~\ref{app:details}); observations are noisy
+copies of the latent state. Training data is one trajectory of
+$N = 10{,}000$ steps in which, at each step with probability $0.5$, one
+random factor is set by $\doop(z^i = v)$ with $v \sim U(-1.5, 1.5)$. Each
+transition is paired with a ground-truth counterfactual that reuses the same
+noise under a different random intervention.
+
+\paragraph{Models.}
+Three baselines share AC-LSCM's encoder and decoder and differ in the
+transition. \emph{Vanilla VAE} uses one MLP on the concatenated latent and
+action. \emph{Dreamer-style} uses a recurrent (GRU) transition cell.
+\emph{Small Transformer} treats the scalars of $(\x_t, a_t)$ as a token
+sequence and predicts $\x_{t+1}$; it is the closest of the three to a
+sequence-model forward model, but it is a forward model plugged into the same
+planner, not a language-model agent. We evaluate the \emph{original} AC-LSCM
+as specified in the first version and the \emph{simplified} AC-LSCM of
+Section~\ref{sec:objective}, plus ablations of the latter.
+
+\paragraph{Agent tasks.}
+Both tasks use Algorithm~\ref{alg:planning} with predicates evaluated on
+decoded predictions unless stated otherwise.
+The \emph{direct-effect task} is the task of the first version: 100 episodes
+on ER-10 with five candidate actions each; in 80 episodes one candidate sets
+the goal factor $z^{K-1}$ above $\tau_g = 1.0$ and one sets the safety factor
+$z^0$ above $\tau_s = 1.5$; in the other 20 episodes every candidate sets
+$z^0$ above $\tau_s$, so the correct response is to defer. Because each action
+sets the factor that the predicates read, the task only tests whether a model
+knows that $\doop(z^i = v)$ yields $z^i \approx v$. Its unsafe values
+($1.6$ to $2.5$) also lie outside the training range of actions. We therefore
+also run an \emph{in-range} variant with $\tau_s = 1.0$ and $\tau_g = 0.5$,
+which places all candidate values inside the training range.
+The \emph{consequence task} (300 episodes on ER-10, identical for all models)
+is designed so that consequences must be propagated. Each candidate is a
+single intervention on a random factor with a value in the training range.
+Safety requires the safety factor $z^9$ to stay below $\tau_s = 0.4$ at every
+step of a three-step horizon; the goal is reached if the goal factor $z^8$
+exceeds $\tau_g = 0.3$ at some step. In the ground-truth graph, $z^9$ has
+parents $z^0, z^5, z^7$ and ancestors $\{0, 2, 5, 7\}$, and $z^8$ has parent
+$z^7$; effects arrive one to three steps after the intervention, and goal and
+safety trade off through the shared ancestors $z^2$ and $z^7$. Outcomes are judged on the realized rollout of the
+true SCM under one shared noise draw. A quarter of the episodes contain no
+safe candidate; every other episode contains at least one safe candidate that
+reaches the goal, so the goal-rate ceiling is $0.75$. As references, a
+planner that uses the noise-free true SCM from the noisy observation reaches
+$4.7\%$ violations, a planner that knows only each action's direct effect
+(the intervened factor takes the intervened value, nothing else changes)
+reaches $31.7\%$, and one that predicts no effect at all reaches $45\%$.
+
+\paragraph{Metrics and seeds.}
+We report one-step intervention and counterfactual MSE on held-out
+trajectories, structural Hamming distance (SHD), and for the agent tasks the
+safety-violation rate (fraction of all episodes in which the executed action
+was unsafe), goal rate, appropriate deferral (fraction of no-safe episodes in
+which the agent deferred), and unnecessary deferral (fraction of episodes with
+a safe action in which it deferred). On ER-10, main models use 5 seeds and
+ablations 3 to 5 seeds; on the other graphs we use 3 seeds, and the baseline
+and original-model numbers there are the first-version runs (same code and
+data). All values are mean $\pm$ sample standard deviation over seeds.
+
+\section{Results}
+
+\subsection{Diagnosis: the original model learned no graph}
+\label{sec:diagnosis}
+
+\begin{table}[t]
+\centering
+\input{generated/tab_mse.tex}
+\caption{One-step prediction error on held-out data (lower is better; best in
+bold) and structure recovery. The original AC-LSCM learned an empty graph on
+every graph type and seed: its SHD equals the number of true edges with zero
+variance. The simplified AC-LSCM has the lowest intervention and
+counterfactual error on all five graphs. ER-10 numbers are from this
+version's runs; the baseline and original-model numbers on the other graphs
+are from the first version.}
+\label{tab:mse}
+\end{table}
+
+Table~\ref{tab:mse} shows that the original AC-LSCM's SHD equals the number of
+true edges on every graph, with zero variance across seeds; in every run the
+thresholded adjacency is empty. The first version read SHD $= 8$ on ER-10 as
+``the learned graph is precise''; it is the SHD of the empty graph. Three
+causes combine. The adjacency logits start at $0$, i.e.\ exactly at the
+evaluation threshold; the $\ell_1$ and NOTEARS penalties (on a graph where
+acyclicity is automatic) push every logit down; and because training uses a
+soft relaxed mask, the transition networks can partially compensate for a
+shrinking edge, so its loss gradient never wins against the penalty. With an
+empty graph each factor's next value is predicted from the action alone,
+ignoring the current state. This explains several first-version observations:
+intervention MSE twice that of the baselines; the ``DAG constraint converged
+exactly to zero''; ablating the graph loss (SHD $68.7$, i.e.\ edges switched
+on) halving the error; and the do-operator ablation changing almost nothing,
+since with no parents the do-operator has nothing to sever. It also explains
+the counterfactual ``fingerprint'' reported there: when the transition ignores
+the state, the abducted residual $\hat\epsilon_t$ carries the state-dependent
+part of $\z_{t+1}$, so abduction partially repairs the factual prediction.
+
+The simplified model removes all three causes. It has the lowest intervention
+and counterfactual error on all five graphs, with the clearest margin on
+counterfactuals (for example $0.020$ versus $0.029$ on ER-10). Structure
+recovery is exact on the chain, nearly exact on ER-10 (one missing edge on
+every seed) and the fork, and poor on the collider and ER-20, where many weak
+edges point into the same node; all errors are missing edges, and no run
+learned a spurious edge.
+
+\subsection{The direct-effect task does not test consequence modeling}
+\label{sec:direct}
+
+\begin{table}[t]
+\centering
+\scriptsize
+\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{@{}lcccccc@{}}
+\toprule
+& \multicolumn{2}{c}{Original, latent predicates}
+& \multicolumn{2}{c}{Original, decoded}
+& \multicolumn{2}{c}{In-range, decoded} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(l){6-7}
+Model & Violations & Approp.\ defer & Violations & Approp.\ defer & Violations & Approp.\ defer \\
+\midrule
+\inputrows{generated/rows_direct.tex}
+\bottomrule
+\end{tabular}
+\caption{Direct-effect task (ER-10, 5 seeds). ``Original, latent'' is the
+protocol of the first version, where predicates read the predicted latent;
+the Transformer has no latent and is evaluated on its predicted observation.
+With decoded predictions every model except the Transformer solves the task;
+with in-range action values the Transformer's violations also drop to 2\%.}
+\label{tab:direct}
+\end{table}
+
+Table~\ref{tab:direct} re-runs the first version's agent task. Under its
+original protocol we reproduce the headline: the Transformer violates safety
+in $15.6\%$ of episodes and the original AC-LSCM in under $1\%$ when its
+predictions are decoded. Two observations change what this means. First, the
+MLP-based baselines (Vanilla VAE, Dreamer-style) also have zero violations
+once their predictions are decoded. Under the first version's latent-space
+protocol they fail, because their latents are not aligned with the
+observation coordinates on which the thresholds are defined; the ``passive
+policy'' seeds of the original AC-LSCM in the first version have the same
+cause and disappear in decoded space (goal rate $0.80$ on every seed).
+Second, when the unsafe values are moved inside the training range, the
+Transformer's violation rate falls from $15.6\%$ to $2.0\%$. Its failure on
+the original task is a failure to extrapolate action values beyond the
+training range, not a failure to represent interventions. The direct-effect
+task is solved by any model that learns $f_i(\varnothing, v) \approx v$ and
+extrapolates monotonically, including the original AC-LSCM, which sees no
+state at all. It cannot support the first version's $36\times$ claim, which we
+withdraw.
+
+\subsection{Consequence task}
+\label{sec:consequence}
+
+\begin{table}[t]
+\centering
+\scriptsize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+Model & Violations $\downarrow$ & Goal rate $\uparrow$ & Approp.\ defer $\uparrow$ & Unneeded defer $\downarrow$ \\
+\midrule
+\inputrows{generated/rows_consequence.tex}
+\bottomrule
+\end{tabular}
+\caption{Consequence task (ER-10, 300 episodes, horizon 3; goal-rate ceiling
+$0.75$; 25\% of episodes have no safe action). 5 seeds for the main models,
+3 for the $\lambda_1 = 0$ and true-graph variants. The oracle plans with the
+noise-free true SCM from the noisy observation.}
+\label{tab:consequence}
+\end{table}
+
+Table~\ref{tab:consequence} reports the consequence task. Three results stand
+out.
+
+\emph{The original AC-LSCM is a graph-blind planner.} Its violation rate of
+$32.1\%$ matches the $31.7\%$ of the reference planner that knows only each
+action's direct effect, and it never defers. This is the expected behaviour of
+a model with an empty graph, and it is roughly three times worse than every
+baseline.
+
+\emph{With a correct graph, AC-LSCM plans at the level of the oracle.} With the
+true graph fixed, or with no sparsity penalty at all ($\lambda_1 = 0$, so all
+$90$ possible edges are kept and each $f_i$ learns which inputs to ignore),
+the simplified model violates safety in $4.8\%$ and $4.7\%$ of episodes,
+matching the noise-free oracle ($4.7\%$) and about a third below the best
+baseline (Vanilla VAE, $7.3\%$). It does so without giving up goal rate
+($0.71$ to $0.72$ against a ceiling of $0.75$) and with few unnecessary
+deferrals.
+
+\emph{Part of that advantage comes from privileged supervision.} The
+counterfactual loss of Equation~\eqref{eq:cf} regresses predicted latents onto
+ground-truth counterfactual \emph{latents}, which tells the model the true
+state coordinates; the baselines receive no such signal. Without it, the dense
+model reaches $6.9\% \pm 0.9\%$ violations: comparable to the VAE
+($7.3\% \pm 1.6\%$), better than the Transformer ($10.2\%$) and Dreamer-style
+($11.8\%$), and with the highest goal rate of all models ($0.727$). The fair
+architectural comparison therefore shows a modest advantage at best on this
+task, while the counterfactual-error advantage of Table~\ref{tab:mse}
+persists without the privileged loss ($0.021$ against $0.029$ for the best
+baseline; Table~\ref{tab:ablation}).
+
+The simplified model with its default sparsity ($\lambda_1 = 0.01$) sits in
+between, at $8.4\% \pm 4.2\%$. Every one of its five seeds recovers seven of
+the eight true edges and misses the same one, $z^0 \to z^9$: one of the two
+weakest edges in the graph (weight $0.65$), and one that feeds the safety factor. A
+structure learner that errs towards missing weak edges produces a forward model
+that is confidently wrong about exactly the indirect effects the safety check
+needs.
+
+
+\subsection{Ablations}
+\label{sec:ablations}
+
+\begin{table}[t]
+\centering
+\scriptsize
+\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{@{}lccccccc@{}}
+\toprule
+AC-LSCM variant & Seeds & Int MSE & CF MSE & Edges & SHD & Violations & Goal rate \\
+\midrule
+\inputrows{generated/rows_ablation.tex}
+\bottomrule
+\end{tabular}
+\caption{Ablations on ER-10 (8 true edges). The last two columns are the
+consequence task. ``Soft mask'' is the simplified model before change (v),
+i.e.\ with a relaxed rather than straight-through adjacency sample.}
+\label{tab:ablation}
+\end{table}
+
+Table~\ref{tab:ablation} isolates the components.
+
+\emph{The do-operator has no measurable effect.} Removing it changes neither
+prediction error nor consequence-task safety, in the original model (where
+there are no parents to sever) or in the simplified one ($8.4\%$ versus
+$9.1\%$ violations, well within seed variation). This retracts the first
+version's claim that the do-operator ``carries the result''. It is consistent
+with Section~3: when the action targets a known factor and is given to that
+factor's mechanism as an input, the network can learn to ignore the parents
+from data, and explicit severing adds nothing measurable in this setting.
+
+\emph{The mask relaxation decides what structure is learned.} With the soft
+relaxed mask, the simplified model misses three edges ($2 \to 7$, $0 \to 9$,
+$5 \to 9$) and violates safety in $24.6\%$ of episodes; with the
+straight-through mask it misses one and reaches $8.4\%$. Prediction error
+barely moves ($0.030$ versus $0.027$), so held-out MSE is a weak guide to the
+quality of the learned structure for planning.
+
+\emph{Sparsity trades structure recovery against safety.} Removing the sparsity
+penalty gives a fully dense graph (SHD $82$) with the same prediction error
+and the best safety. On this task an interpretable sparse graph is not needed
+for planning, and pruning is harmful when it removes weak true edges.
+
+\emph{Counterfactual supervision matters, and it is privileged.} Without
+$\mathcal{L}_{\text{cf}}$ the sparse model loses more edges (SHD $3.7$) and
+its violation rate rises to $28.0\%$; the dense model without it reaches
+$6.9\%$. In both cases the counterfactual loss is helping by anchoring the
+latent coordinates, which a real agent would not get for free.
+

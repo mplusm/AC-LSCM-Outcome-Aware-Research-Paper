@@ -1,0 +1,12 @@
+{
+  "variant": "aclscm_simplified_st",
+  "seed": 1,
+  "mse": {
+    "intervention_mse": 0.024141463451087475,
+    "counterfactual_mse": 0.018526705913245678,
+    "shd": 6,
+    "dag_constraint": 0.0006084442138671875,
+    "epochs_run": 135,
+    "n_learned_edges": 3
+  }
+}

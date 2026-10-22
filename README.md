@@ -31,28 +31,37 @@ AC-LSCM is the architecture proposed in the paper. It combines:
 - A three-step counterfactual inference loop (abduction, intervention, prediction)
 - A planning loop that filters actions through simulated outcomes before execution
 
-## Headline Results
+## Headline Results (revised version)
 
-On a safety-critical agent planning task (ER K=10, 13 seeds):
+> **Correction.** The first version of the paper (Zenodo, May 2026) reported ~36x fewer safety
+> violations than a Transformer. That result does not hold up: the originally specified model learned
+> an **empty causal graph in every run**, and the agent task only tested the direct effect of an action
+> with unsafe values outside the training range. See the paper's Section 9 and Appendix B.
 
-| Model | Goal Rate | Safety Violations | Appropriate Deferral |
-|-------|-----------|-------------------|----------------------|
-| Small Transformer (n=3) | 0.800 ± 0.000 | 0.180 ± 0.022 | 0.100 ± 0.108 |
-| AC-LSCM, all seeds (n=13) | 0.554 ± 0.369 | **0.005 ± 0.019** | **0.985 ± 0.053** |
-| AC-LSCM, working seeds (n=9) | 0.800 ± 0.000 | **0.000 ± 0.000** | **1.000 ± 0.000** |
+Consequence task (ER K=10, safety and goal depend on downstream effects over 3 steps; mean +- std over seeds):
 
-Roughly 36x fewer safety violations than the Transformer baseline on average. 12 of 13 seeds produce zero safety violations. The Transformer's 0.800 goal rate is the task ceiling, which working AC-LSCM seeds tie.
+| Model | Violations | Goal rate (ceiling 0.75) |
+|-------|-----------:|-------------------------:|
+| Small Transformer | 0.102 +- 0.013 | 0.684 |
+| Vanilla VAE | 0.073 +- 0.016 | 0.709 |
+| Dreamer-style | 0.118 +- 0.025 | 0.717 |
+| AC-LSCM, original (empty graph) | 0.321 +- 0.018 | 0.659 |
+| AC-LSCM, simplified | 0.084 +- 0.042 | 0.705 |
+| AC-LSCM, simplified, no sparsity | **0.047 +- 0.003** | 0.714 |
+| AC-LSCM, simplified, no sparsity, no CF supervision | 0.069 +- 0.009 | 0.727 |
+| Oracle (true SCM, noise-free) | 0.047 | 0.683 |
 
-See the paper for the full attribution control (architectural fixes do the work, not data volume), the ablation results (three of four ablations improve the architecture), and the failure-mode analysis (about a third of seeds fail to produce a usable planner despite normal training-time MSE).
+- The simplified AC-LSCM has the lowest one-step and counterfactual MSE on all five synthetic graphs.
+- With a graph that keeps every true edge it plans at oracle level, but that uses ground-truth
+  counterfactual supervision the baselines do not get; without it, it is on par with the VAE.
+- The do-operator has no measurable effect. Pruning one weak edge into the safety factor costs most of the gain.
 
 ## Honest Caveats
 
-Reading this before running the code will save you time.
-
-1. **Training is unstable.** Roughly 31% of seeds (4 of 13) failed to produce a usable planner despite normal MSE. Two distinct failure modes: a passive policy that never picks the goal action, and a value mis-rank that occasionally picks unsafe.
-2. **Three of four ablations improve the architecture.** The DAG loss and contrastive hinge are net-negative at the scales tested. The paper recommends a simplified follow-up. This codebase reproduces the original architecture as documented; the simpler version is on the roadmap.
-3. **No language-domain evaluation yet.** All experiments are on synthetic structural causal models with `K` up to 20. CLadder and CounterBench evaluation is future work.
-4. **Small experiments.** Total compute for the published results was under 50 GPU-hours on a single T4. Do not expect frontier-scale claims.
+1. **Synthetic only.** SCMs with K <= 20, observations = noisy latents, known action targets. No language-domain evaluation.
+2. **Privileged supervision.** The counterfactual loss uses ground-truth counterfactual latents, available only in simulation.
+3. **Structure recovery is partial** on collider and ER K=20 graphs (missing weak edges; no spurious edges).
+4. **First-version claims withdrawn:** the 36x safety result, precise structure recovery (SHD 8 was the empty graph), and the do-operator "carrying the result".
 
 ## Quick Start
 
@@ -75,7 +84,20 @@ python -m src.train --config configs/synthetic_chain.yaml --seed 0 --epochs 1
 
 If this completes without errors, your environment is set up correctly.
 
-### Reproduce the headline result
+### Reproduce the revised results
+
+```bash
+# One (variant, seed) per process; see VARIANTS in scripts/run_revision.py
+python scripts/run_revision.py --variant aclscm_simplified_st --seed 0 --results-dir results_v2/er_k10
+python scripts/run_revision.py --variant aclscm_simplified_st --seed 0 \
+  --config configs/synthetic_chain.yaml --results-dir results_v2/chain --mse-only
+
+# Aggregate and write the paper tables
+python scripts/aggregate_revision.py > tables/revision_summary.json
+python scripts/make_revision_tables.py tables/revision_summary.json paper/source/generated
+```
+
+### Reproduce the first-version results
 
 ```bash
 # All Tier 1 experiments + ablations + agent task (~40 GPU-hours on T4)
@@ -123,12 +145,17 @@ ac-lscm/
 │   ├── losses.py              # four-term composite loss
 │   ├── train.py               # training loop with checkpointing
 │   ├── eval.py                # evaluation metrics
-│   ├── planning.py            # Algorithm 1: outcome-aware action selection
+│   ├── planning.py            # Algorithm 1 (first-version agent task)
+│   ├── agent_tasks.py         # direct-effect and consequence tasks (revised version)
 │   └── utils.py               # seeds, logging, DAG metrics
 ├── scripts/
-│   ├── run_all.sh             # reproduces all experiments
-│   └── make_tables.py         # generates LaTeX tables
-├── results/                   # per-seed JSON outputs (gitignored except summary)
+│   ├── run_all.sh             # reproduces first-version experiments
+│   ├── make_tables.py         # first-version LaTeX tables
+│   ├── run_revision.py        # revised-version experiments
+│   ├── aggregate_revision.py  # revised-version aggregation
+│   └── make_revision_tables.py
+├── results/                   # first-version per-seed JSON outputs
+├── results_v2/                # revised-version per-seed JSON outputs
 └── tables/                    # generated LaTeX tables
 ```
 
@@ -142,7 +169,7 @@ The architecture is documented in detail in the paper. A brief summary:
 
 **Transition operator** `p_psi(z_{t+1} | z_t, do(a_t))`: per-factor MLPs `f_i` with structural semantics. When the action targets factor `i`, the parent contribution is severed and the intervention value substituted. This is the `do`-operator made explicit at the computation graph level.
 
-**Adjacency** `A`: learned `K x K` matrix, soft during training (Gumbel-Sigmoid), hard at evaluation. Trained with the NOTEARS continuous DAG constraint plus L1 sparsity.
+**Adjacency** `A`: learned `K x K` matrix, Gumbel-Sigmoid during training, thresholded at evaluation. The original model uses soft samples with the NOTEARS constraint plus L1 sparsity (this learns an empty graph); the simplified model uses straight-through hard samples, no acyclicity term (parents are lagged, so the graph is acyclic by construction) and a smaller L1 weight.
 
 **Counterfactual inference**: three steps.
 1. Abduction: recover `epsilon_t` from observed `(x_t, a_t, x_{t+1})`.
@@ -157,7 +184,7 @@ The repo includes three baselines for comparison.
 
 - **VanillaVAE**: same encoder/decoder, single-MLP transition with action concatenated.
 - **DreamerStyle**: same as VanillaVAE but with a GRU transition cell.
-- **SmallTransformer**: treats `(x_t, a_t)` as a token sequence, predicts `x_{t+1}`. This is the closest analog to a token-prediction agent.
+- **SmallTransformer**: treats `(x_t, a_t)` as a token sequence, predicts `x_{t+1}`. It is a sequence-model forward model used in the same planner, not a language-model agent.
 
 ## Reproducibility
 
@@ -186,17 +213,14 @@ If you use this code or build on the ideas, please cite:
 }
 ```
 
-(Replace `20379456` with the actual DOI from Zenodo after upload.)
-
 ## Roadmap
 
-What is queued for the next version, in priority order.
-
-- [ ] Retrain the simplified architecture (no contrastive hinge, soft DAGMA regularizer or no structural loss) and report whether the training instability persists.
-- [ ] Make the agent task harder: raise `no_safe_frac` from 0.2 to 0.5, add upstream-effect distractors, lower the goal-action margin so the goal rate metric discriminates above the current 0.800 ceiling.
-- [ ] Add a degenerate-seed detector during training (rank correlation between predicted and ground-truth `z_{K-1}` on a validation planning task; flag below threshold).
-- [ ] Track `inappropriate_deferral_rate` and `safe_non_goal_pick_rate` as headline metrics so failure modes are visible without per-seed reverse-engineering.
-- [ ] Evaluate on CLadder and CounterBench.
+- [x] Retrain the simplified architecture (done in the revised version).
+- [x] Agent task with downstream effects and in-range actions (consequence task).
+- [x] Track unnecessary deferral as a headline metric.
+- [ ] Structure learning that does not prune weak edges into safety-relevant factors.
+- [ ] Remove the need for ground-truth counterfactual supervision.
+- [ ] Evaluate on CLadder and CounterBench; connect to a language-model agent.
 - [ ] Scale beyond `K=20`.
 
 ## Contributing

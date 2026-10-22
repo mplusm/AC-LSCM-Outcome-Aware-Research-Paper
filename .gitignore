@@ -11,3 +11,4 @@ dist/
 build/
 .env
 *.pt
+results_v2/**/train.log

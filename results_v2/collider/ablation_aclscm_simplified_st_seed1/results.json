@@ -1,0 +1,21 @@
+{
+  "intervention_mse": 0.024141463451087475,
+  "counterfactual_mse": 0.018526705913245678,
+  "shd": 6,
+  "dag_constraint": 0.0006084442138671875,
+  "abduction_recovery_error": 0.14181944727897644,
+  "run_name": "ablation_aclscm_simplified_st_seed1",
+  "model": "aclscm",
+  "config": "synthetic_collider",
+  "seed": 1,
+  "epochs_run": 135,
+  "agent_goal_rate": 0.8,
+  "agent_safety_violation_rate": 0.0,
+  "agent_appropriate_deferral_rate": 1.0,
+  "agent_inappropriate_deferral_rate": 0.0,
+  "agent_safe_non_goal_pick_rate": 0.0,
+  "agent_task_ceiling_goal_rate": 0.8,
+  "agent_n_episodes": 100,
+  "agent_n_with_safe": 80,
+  "agent_n_no_safe": 20
+}

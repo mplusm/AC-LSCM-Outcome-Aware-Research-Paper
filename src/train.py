@@ -120,6 +120,8 @@ def train_epoch(model, loader, optimizer, device, cfg, model_cfg, epoch: int = 0
             beta_3=beta_3 * dag_lambda2_factor,
             beta_4=beta_4,
             acyclicity=acyclicity,
+            lambda1=cfg["training"].get("lambda_1", 0.1),
+            use_hinge=model_cfg.get("use_hinge", True),
         )
 
         losses["total"].backward()
@@ -182,6 +184,8 @@ def val_epoch(model, loader, device, cfg, model_cfg) -> dict:
             beta_3=beta_3,
             beta_4=beta_4,
             acyclicity=acyclicity,
+            lambda1=cfg["training"].get("lambda_1", 0.1),
+            use_hinge=model_cfg.get("use_hinge", True),
         )
 
         for k in totals:
@@ -269,7 +273,11 @@ def train_model(
     if model_name == "aclscm":
         use_do = model_cfg.get("use_do_operator", True)
         acyclicity = model_cfg.get("acyclicity", "notears")
-        model = ACLSCM(K=K, obs_dim=obs_dim, use_do_operator=use_do, acyclicity=acyclicity)
+        model = ACLSCM(K=K, obs_dim=obs_dim, use_do_operator=use_do, acyclicity=acyclicity,
+                       init_logit=model_cfg.get("init_logit", 0.0),
+                       exact_abduction=model_cfg.get("exact_abduction", False),
+                       hard_gumbel=model_cfg.get("hard_gumbel", False),
+                       fixed_adjacency=model_cfg.get("fixed_adjacency"))
     else:
         model = get_model(model_name, K=K, obs_dim=obs_dim)
     model = model.to(device)

@@ -1,0 +1,45 @@
+{
+  "variant": "aclscm_simplified_st_dense_no_cf",
+  "seed": 1,
+  "mse": {
+    "intervention_mse": 0.026738940738141537,
+    "counterfactual_mse": 0.020563132129609585,
+    "shd": 82,
+    "dag_constraint": 918.6118774414062,
+    "epochs_run": 99,
+    "n_learned_edges": 90
+  },
+  "direct_original_latent": {
+    "goal_rate": 0.8,
+    "safety_violation_rate": 0.2,
+    "appropriate_deferral_rate": 0.0,
+    "inappropriate_deferral_rate": 0.0,
+    "safe_non_goal_pick_rate": 0.0,
+    "n_episodes": 100
+  },
+  "direct_original_decoded": {
+    "goal_rate": 0.8,
+    "safety_violation_rate": 0.0,
+    "appropriate_deferral_rate": 1.0,
+    "inappropriate_deferral_rate": 0.0,
+    "safe_non_goal_pick_rate": 0.0,
+    "n_episodes": 100
+  },
+  "direct_in_range_decoded": {
+    "goal_rate": 0.8,
+    "safety_violation_rate": 0.0,
+    "appropriate_deferral_rate": 1.0,
+    "inappropriate_deferral_rate": 0.0,
+    "safe_non_goal_pick_rate": 0.0,
+    "n_episodes": 100
+  },
+  "consequence_decoded": {
+    "goal_rate": 0.7233333333333334,
+    "goal_rate_of_reachable": 0.9644444444444444,
+    "safety_violation_rate": 0.06666666666666667,
+    "appropriate_deferral_rate": 0.76,
+    "inappropriate_deferral_rate": 0.0044444444444444444,
+    "n_episodes": 300,
+    "goal_ceiling": 0.75
+  }
+}

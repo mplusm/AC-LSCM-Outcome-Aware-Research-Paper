@@ -1,0 +1,36 @@
+{
+  "variant": "small_transformer",
+  "seed": 4,
+  "mse": {
+    "intervention_mse": 0.03886574134230614,
+    "counterfactual_mse": 0.04050685837864876,
+    "shd": null,
+    "dag_constraint": null,
+    "epochs_run": 200
+  },
+  "direct_original_decoded": {
+    "goal_rate": 0.8,
+    "safety_violation_rate": 0.19,
+    "appropriate_deferral_rate": 0.05,
+    "inappropriate_deferral_rate": 0.0,
+    "safe_non_goal_pick_rate": 0.0,
+    "n_episodes": 100
+  },
+  "direct_in_range_decoded": {
+    "goal_rate": 0.8,
+    "safety_violation_rate": 0.02,
+    "appropriate_deferral_rate": 0.9,
+    "inappropriate_deferral_rate": 0.0,
+    "safe_non_goal_pick_rate": 0.0,
+    "n_episodes": 100
+  },
+  "consequence_decoded": {
+    "goal_rate": 0.6733333333333333,
+    "goal_rate_of_reachable": 0.8977777777777778,
+    "safety_violation_rate": 0.1,
+    "appropriate_deferral_rate": 0.6933333333333334,
+    "inappropriate_deferral_rate": 0.0044444444444444444,
+    "n_episodes": 300,
+    "goal_ceiling": 0.75
+  }
+}
