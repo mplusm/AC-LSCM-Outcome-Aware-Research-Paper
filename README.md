@@ -31,37 +31,46 @@ AC-LSCM is the architecture proposed in the paper. It combines:
 - A three-step counterfactual inference loop (abduction, intervention, prediction)
 - A planning loop that filters actions through simulated outcomes before execution
 
-## Headline Results (revised version)
+## Headline Results (third version)
 
 > **Correction.** The first version of the paper (Zenodo, May 2026) reported ~36x fewer safety
 > violations than a Transformer. That result does not hold up: the originally specified model learned
 > an **empty causal graph in every run**, and the agent task only tested the direct effect of an action
-> with unsafe values outside the training range. See the paper's Section 9 and Appendix B.
+> with unsafe values outside the training range. See Section 6 of the current paper.
 
-Consequence task (ER K=10, safety and goal depend on downstream effects over 3 steps; mean +- std over seeds):
+The current paper is a controlled study: 7 random SCMs (5 with 10 variables, 2 with 20), a consequence
+task configured by a fixed rule (safety/goal variables downstream of the actions, 3-step horizon),
+3 seeds per model and environment, 408 training runs. Excess violations are normalized per environment:
+0 = oracle (true SCM), 1 = a planner that predicts no effect.
 
-| Model | Violations | Goal rate (ceiling 0.75) |
-|-------|-----------:|-------------------------:|
-| Small Transformer | 0.102 +- 0.013 | 0.684 |
-| Vanilla VAE | 0.073 +- 0.016 | 0.709 |
-| Dreamer-style | 0.118 +- 0.025 | 0.717 |
-| AC-LSCM, original (empty graph) | 0.321 +- 0.018 | 0.659 |
-| AC-LSCM, simplified | 0.084 +- 0.042 | 0.705 |
-| AC-LSCM, simplified, no sparsity | **0.047 +- 0.003** | 0.714 |
-| AC-LSCM, simplified, no sparsity, no CF supervision | 0.069 +- 0.009 | 0.727 |
-| Oracle (true SCM, noise-free) | 0.047 | 0.683 |
+| Forward model (N = 10,000) | Rollout MSE, ER-10 | Excess viol., ER-10 (1 var / 2 vars) | Excess viol., ER-20 (1 var / 2 vars) |
+|---|---:|---:|---:|
+| **AC-LSCM, factored** (factors = observed variables, hard do) | **0.009** | **0.25 / 0.18** | **0.41 / 0.40** |
+| AC-LSCM, latent (learned encoder) | 0.032 | 0.68 / 0.73 | 0.90 / 0.95 |
+| Vanilla VAE + do-wrapper | 0.011 | 0.31 / 0.28 | 0.57 / 0.54 |
+| Dreamer-style + do-wrapper | 0.011 | 0.38 / 0.36 | 0.53 / 0.56 |
+| Small Transformer + do-wrapper | 0.023 | 0.36 / 0.37 | 0.59 / 0.59 |
+| AC-LSCM, factored, true graph (reference) | 0.009 | 0.24 / 0.16 | 0.34 / 0.36 |
 
-- The simplified AC-LSCM has the lowest one-step and counterfactual MSE on all five synthetic graphs.
-- With a graph that keeps every true edge it plans at oracle level, but that uses ground-truth
-  counterfactual supervision the baselines do not get; without it, it is on par with the VAE.
-- The do-operator has no measurable effect. Pruning one weak edge into the safety factor costs most of the gain.
+- The factored AC-LSCM recovers the exact graph on all ER-10 graphs and has lower 3-step rollout error
+  than every baseline in **all 396 paired comparisons**. Its safety margin is largest for two-variable
+  actions never seen in training, on 20-variable graphs, and with little data.
+- The same model with learned latent factors is worse than the baselines: interventions land on latent
+  coordinates that do not correspond to the observed variables.
+- The do-wrapper (impose the correct action semantics on any model) removes much of the baselines' deficit;
+  the explicit do-operator adds little once the factors are right.
+- Counterfactual training data, given to every model, helps structured models only.
+- Every planner remains far from the oracle.
 
 ## Honest Caveats
 
-1. **Synthetic only.** SCMs with K <= 20, observations = noisy latents, known action targets. No language-domain evaluation.
-2. **Privileged supervision.** The counterfactual loss uses ground-truth counterfactual latents, available only in simulation.
-3. **Structure recovery is partial** on collider and ER K=20 graphs (missing weak edges; no spurious edges).
-4. **First-version claims withdrawn:** the 36x safety result, precise structure recovery (SHD 8 was the empty graph), and the do-operator "carrying the result".
+1. **Synthetic, matched setting.** Lagged additive-noise SCMs with K <= 20, observations = noisy state,
+   known action targets: the setting most favourable to the factored model. No language-domain evaluation.
+2. **Single-variable actions on ER-10:** the factored model's margin over the best baseline (VAE + do-wrapper)
+   is within noise; the margins on two-variable actions and ER-20 are clear.
+3. **ER-20 rests on two graphs**; baselines keep the first version's hyperparameters.
+4. **First-version claims withdrawn:** the 36x safety result, precise structure recovery (SHD 8 was the
+   empty graph), and the do-operator "carrying the result".
 
 ## Quick Start
 
@@ -84,18 +93,21 @@ python -m src.train --config configs/synthetic_chain.yaml --seed 0 --epochs 1
 
 If this completes without errors, your environment is set up correctly.
 
-### Reproduce the revised results
+### Reproduce the current results
 
 ```bash
-# One (variant, seed) per process; see VARIANTS in scripts/run_revision.py
-python scripts/run_revision.py --variant aclscm_simplified_st --seed 0 --results-dir results_v2/er_k10
-python scripts/run_revision.py --variant aclscm_simplified_st --seed 0 \
-  --config configs/synthetic_chain.yaml --results-dir results_v2/chain --mse-only
+# One (environment, variant, seed, training-set size) per process; see VARIANTS in scripts/run_v3.py
+python scripts/run_v3.py --env er10_s1 --variant fact_sparse --seed 0
+python scripts/run_v3.py --env er20_s0 --variant transformer --seed 2 --n-train 10000
+python scripts/v3_references.py er10_s0 er10_s1 er10_s2 er10_s3 er10_s4 er20_s0 er20_s1
 
 # Aggregate and write the paper tables
-python scripts/aggregate_revision.py > tables/revision_summary.json
-python scripts/make_revision_tables.py tables/revision_summary.json paper/source/generated
+python scripts/aggregate_v3.py > tables/v3_summary.json
+python scripts/make_v3_tables.py results_v3 paper/source/generated
+python scripts/make_revision_tables.py tables/revision_summary.json paper/source/generated --v1-only
 ```
+
+The intermediate (second) revision's runs are in `results_v2/` (`scripts/run_revision.py`).
 
 ### Reproduce the first-version results
 
@@ -146,16 +158,20 @@ ac-lscm/
 │   ├── train.py               # training loop with checkpointing
 │   ├── eval.py                # evaluation metrics
 │   ├── planning.py            # Algorithm 1 (first-version agent task)
-│   ├── agent_tasks.py         # direct-effect and consequence tasks (revised version)
+│   ├── agent_tasks.py         # direct-effect and consequence tasks, do-wrapper, rollout error
 │   └── utils.py               # seeds, logging, DAG metrics
 ├── scripts/
 │   ├── run_all.sh             # reproduces first-version experiments
 │   ├── make_tables.py         # first-version LaTeX tables
-│   ├── run_revision.py        # revised-version experiments
-│   ├── aggregate_revision.py  # revised-version aggregation
-│   └── make_revision_tables.py
+│   ├── run_v3.py              # current experiments (7 environments, all variants)
+│   ├── v3_references.py       # oracle and no-model references per environment
+│   ├── aggregate_v3.py, make_v3_tables.py
+│   ├── run_revision.py        # intermediate revision (single environment)
+│   ├── aggregate_revision.py
+│   └── make_revision_tables.py  # first-version diagnosis tables
 ├── results/                   # first-version per-seed JSON outputs
-├── results_v2/                # revised-version per-seed JSON outputs
+├── results_v2/                # intermediate revision per-seed JSON outputs
+├── results_v3/                # current per-seed JSON outputs (408 runs)
 └── tables/                    # generated LaTeX tables
 ```
 
@@ -204,7 +220,7 @@ If you use this code or build on the ideas, please cite:
 
 ```bibtex
 @misc{madapathi2026aclscm,
-  title  = {Outcome-Aware Agents: From Token Prediction to Action Consequence Modeling},
+  title  = {Outcome-Aware Agents: When Does Causal Structure Help a Forward Model Foresee the Consequences of Actions?},
   author = {Madapathi, Mallesh},
   year   = {2026},
   doi    = {10.5281/zenodo.20379456},
@@ -215,12 +231,11 @@ If you use this code or build on the ideas, please cite:
 
 ## Roadmap
 
-- [x] Retrain the simplified architecture (done in the revised version).
-- [x] Agent task with downstream effects and in-range actions (consequence task).
-- [x] Track unnecessary deferral as a headline metric.
-- [ ] Structure learning that does not prune weak edges into safety-relevant factors.
-- [ ] Remove the need for ground-truth counterfactual supervision.
-- [ ] Evaluate on CLadder and CounterBench; connect to a language-model agent.
+- [x] Consequence task with downstream effects, in-range actions, fixed configuration rule, 7 environments.
+- [x] Fair counterfactual-data comparison and do-wrapper control.
+- [ ] Uncertainty-aware planning (calibrated rollouts, conservative safety margins).
+- [ ] Misspecified mechanisms, partial observability, unknown intervention targets.
+- [ ] Connect to a language-model agent (variables and actions extracted from tool calls).
 - [ ] Scale beyond `K=20`.
 
 ## Contributing

@@ -122,7 +122,7 @@ def main():
                                                      space="decoded", rng_seed=args.seed)
 
     # The same consequence episodes for every model and seed.
-    episodes = make_consequence_episodes(scm, n_episodes=args.episodes, rng_seed=12345, **{
+    episodes = make_consequence_episodes(scm, n_episodes=args.episodes, rng_seed=12345, legacy_rng=True, **{
         k: CONSEQ[k] for k in ("horizon", "safety_node", "goal_node", "tau_s", "tau_g")})
     out["consequence_decoded"] = run_consequence_task(model, episodes, space="decoded", **CONSEQ)
     if args.seed == 0 and args.variant == "aclscm_simplified":

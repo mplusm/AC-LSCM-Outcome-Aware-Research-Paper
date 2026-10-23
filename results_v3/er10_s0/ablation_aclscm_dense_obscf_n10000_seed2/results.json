@@ -1,0 +1,12 @@
+{
+  "intervention_mse": 0.026559789665043354,
+  "counterfactual_mse": 0.016834273003041744,
+  "shd": 82,
+  "dag_constraint": 995.9771728515625,
+  "abduction_recovery_error": 0.0533749982714653,
+  "run_name": "ablation_aclscm_dense_obscf_n10000_seed2",
+  "model": "aclscm",
+  "config": "er10_s0",
+  "seed": 2,
+  "epochs_run": 57
+}

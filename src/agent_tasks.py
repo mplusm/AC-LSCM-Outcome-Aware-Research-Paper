@@ -35,10 +35,22 @@ def predict_rollout(model, x_t: torch.Tensor, a_t: torch.Tensor, horizon: int, s
     """Apply a_t at the first step, then roll forward with no action.
 
     x_t, a_t: (B, K). Returns a tensor (horizon, B, K) of predictions in the
-    requested space.
+    requested space. space="do_wrapper" ignores how the model itself handles
+    actions: it predicts the next observation without action, overwrites the
+    intervened coordinates with their values, and rolls forward in observation
+    space. Any model can be run this way when the action semantics are known.
     """
     model.eval()
     no_action = torch.full_like(a_t, float("nan"))
+    if space == "do_wrapper":
+        mask = ~torch.isnan(a_t)
+        x, preds = x_t, []
+        for k in range(horizon):
+            x = model(x, no_action)["x_tp1_recon"]
+            if k == 0:
+                x = torch.where(mask, torch.nan_to_num(a_t), x)
+            preds.append(x)
+        return torch.stack(preds)
     preds = []
     if isinstance(model, SmallTransformer):
         # The Transformer only has an observation space.
@@ -146,11 +158,41 @@ def _true_rollout(scm, z_t, action, eps_seq):
     return np.stack(traj)  # (H, K)
 
 
+def random_action(rng, K: int, n_targets: int = 1, action_range: float = 1.5,
+                  legacy_rng: bool = False) -> np.ndarray:
+    """``legacy_rng`` reproduces the random draws of the second version's
+    single-target generator (results_v2); the third version uses the default."""
+    a = np.full(K, np.nan, dtype=np.float32)
+    if legacy_rng:
+        assert n_targets == 1
+        a[rng.randint(K)] = rng.uniform(-action_range, action_range)
+        return a
+    idx = rng.choice(K, n_targets, replace=False)
+    a[idx] = rng.uniform(-action_range, action_range, size=n_targets)
+    return a
+
+
+def start_states(scm, n: int, rng, action_range: float = 1.5, burn_in: int = 100) -> list:
+    """States of the training-time process (one random do() w.p. 0.5 per step)."""
+    K = scm.K
+    z = rng.randn(K).astype(np.float32) * 0.5
+    states = []
+    while len(states) < n + burn_in:
+        eps = (rng.randn(K) * scm.noise_sigma).astype(np.float32)
+        inter = None
+        if rng.rand() < 0.5:
+            inter = {int(rng.randint(K)): float(rng.uniform(-action_range, action_range))}
+        z = scm._compute_z_from_parents(z, eps, inter)
+        states.append(z.copy())
+    return states[burn_in:]
+
+
 def make_consequence_episodes(scm, n_episodes: int = 300, horizon: int = 3, safety_node: int = 9,
                               goal_node: int = 8, tau_s: float = 0.5, tau_g: float = 0.4,
                               n_candidates: int = 6, no_safe_frac: float = 0.25,
                               action_range: float = 1.5, pool_size: int = 60,
-                              margin: float = 0.1, rng_seed: int = 0) -> list:
+                              margin: float = 0.1, rng_seed: int = 0, n_targets: int = 1,
+                              legacy_rng: bool = False) -> list:
     """Generate episodes with ground-truth outcomes.
 
     The start state is drawn from a trajectory of the training-time process
@@ -161,23 +203,16 @@ def make_consequence_episodes(scm, n_episodes: int = 300, horizon: int = 3, safe
     candidate at all, and every other episode has at least one safe candidate
     that reaches the goal. Candidates whose realised outcome lies within
     ``margin`` of either threshold are discarded, so that labels are decided by
-    the action rather than by the exogenous noise.
+    the action rather than by the exogenous noise. With ``n_targets`` > 1 each
+    candidate intervenes on that many distinct factors at once, which never
+    happens during training.
     """
     K = scm.K
     rng = np.random.RandomState(rng_seed)
     sig, obs_sig = scm.noise_sigma, scm.obs_noise_sigma
 
     # Burn in the natural process and collect start states.
-    z = rng.randn(K).astype(np.float32) * 0.5
-    starts = []
-    while len(starts) < n_episodes * 4:
-        eps = (rng.randn(K) * sig).astype(np.float32)
-        inter = None
-        if rng.rand() < 0.5:
-            inter = {int(rng.randint(K)): float(rng.uniform(-action_range, action_range))}
-        z = scm._compute_z_from_parents(z, eps, inter)
-        starts.append(z.copy())
-    starts = starts[100:]
+    starts = start_states(scm, n_episodes * 4 - 100, rng, action_range)
 
     episodes, n_no_safe_target = [], int(round(n_episodes * no_safe_frac))
     attempts = 0
@@ -190,8 +225,7 @@ def make_consequence_episodes(scm, n_episodes: int = 300, horizon: int = 3, safe
         eps_seq = (rng.randn(horizon, K) * sig).astype(np.float32)
         pool = []
         for _ in range(pool_size):
-            a = np.full(K, np.nan, dtype=np.float32)
-            a[rng.randint(K)] = rng.uniform(-action_range, action_range)
+            a = random_action(rng, K, n_targets, action_range, legacy_rng)
             traj = _true_rollout(scm, z_t, a, eps_seq)
             s_max, g_max = traj[:, safety_node].max(), traj[:, goal_node].max()
             if abs(s_max - tau_s) < margin or abs(g_max - tau_g) < margin:
@@ -276,3 +310,53 @@ def oracle_predictor(scm, horizon: int):
             out.append(_true_rollout(scm, e["x_t"], a, zero))
         return torch.tensor(np.stack(out)).permute(1, 0, 2)  # (H, C, K)
     return predict
+
+
+# ---------------------------------------------------------------------------
+# Multi-step prediction error and per-environment task configuration
+# ---------------------------------------------------------------------------
+
+def rollout_mse(model, scm, horizon: int = 3, n: int = 500, n_targets: int = 1,
+                space: str = "decoded", rng_seed: int = 777) -> dict:
+    """Error of the H-step prediction after one intervention, against the
+    noise-free ground-truth rollout from the true state."""
+    rng = np.random.RandomState(rng_seed)
+    K = scm.K
+    zs = start_states(scm, n, rng)
+    acts = np.stack([random_action(rng, K, n_targets) for _ in range(n)])
+    zero = np.zeros((horizon, K), dtype=np.float32)
+    truth = np.stack([_true_rollout(scm, z, a, zero) for z, a in zip(zs, acts)], axis=1)  # (H, n, K)
+    x_t = np.stack(zs) + (rng.randn(n, K) * scm.obs_noise_sigma).astype(np.float32)
+    if model is None:  # no-effect reference: predict that nothing changes
+        pred = np.repeat(x_t[None], horizon, axis=0)
+    else:
+        pred = predict_rollout(model, torch.tensor(x_t), torch.tensor(acts), horizon, space).numpy()
+    err = (pred - truth) ** 2
+    return {"mse": float(err.mean()), "mse_final_step": float(err[-1].mean()),
+            "mse_per_step": [float(e) for e in err.mean(axis=(1, 2))]}
+
+
+def auto_task(scm, horizon: int = 3, q_s: float = 0.7, q_g: float = 0.7, rng_seed: int = 4242) -> dict:
+    """Consequence-task configuration chosen by a fixed rule, so that no
+    environment is hand-tuned: the safety factor is the factor with the most
+    ancestors, the goal factor the one with the second most, and each
+    threshold is a quantile of that factor's realised H-step maximum under
+    random single-factor interventions in the training range."""
+    import networkx as nx
+    A = scm.true_adjacency
+    G = nx.DiGraph([(int(j), int(i)) for i, j in zip(*np.nonzero(A))])
+    G.add_nodes_from(range(scm.K))
+    order = sorted(range(scm.K), key=lambda n: (len(nx.ancestors(G, n)), n), reverse=True)
+    s_node, g_node = order[0], order[1]
+    rng = np.random.RandomState(rng_seed)
+    s_max, g_max = [], []
+    for z in start_states(scm, 400, rng):
+        eps = (rng.randn(horizon, scm.K) * scm.noise_sigma).astype(np.float32)
+        traj = _true_rollout(scm, z, random_action(rng, scm.K), eps)
+        s_max.append(traj[:, s_node].max())
+        g_max.append(traj[:, g_node].max())
+    return dict(horizon=horizon, safety_node=int(s_node), goal_node=int(g_node),
+                tau_s=round(float(np.quantile(s_max, q_s)), 2),
+                tau_g=round(float(np.quantile(g_max, q_g)), 2),
+                n_ancestors_safety=len(nx.ancestors(G, s_node)),
+                n_ancestors_goal=len(nx.ancestors(G, g_node)))

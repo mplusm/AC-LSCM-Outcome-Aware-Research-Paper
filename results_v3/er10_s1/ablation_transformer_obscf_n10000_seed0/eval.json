@@ -1,0 +1,93 @@
+{
+  "env": "er10_s1",
+  "variant": "transformer_obscf",
+  "seed": 0,
+  "n_train": 10000,
+  "task": {
+    "horizon": 3,
+    "safety_node": 9,
+    "goal_node": 8,
+    "tau_s": 0.66,
+    "tau_g": 0.79,
+    "n_ancestors_safety": 8,
+    "n_ancestors_goal": 4
+  },
+  "mse": {
+    "intervention_mse": 0.04176079295575619,
+    "counterfactual_mse": 0.04252965748310089,
+    "shd": null,
+    "epochs_run": 200
+  },
+  "rollout_native_t1": {
+    "mse": 0.030822517350316048,
+    "mse_final_step": 0.032192155718803406,
+    "mse_per_step": [
+      0.023749422281980515,
+      0.036525972187519073,
+      0.032192155718803406
+    ]
+  },
+  "rollout_native_t2": {
+    "mse": 0.037664301693439484,
+    "mse_final_step": 0.03781266510486603,
+    "mse_per_step": [
+      0.029865607619285583,
+      0.04531462863087654,
+      0.03781266510486603
+    ]
+  },
+  "rollout_do_wrapper_t1": {
+    "mse": 0.02603856660425663,
+    "mse_final_step": 0.02940085530281067,
+    "mse_per_step": [
+      0.018187224864959717,
+      0.030527617782354355,
+      0.02940085530281067
+    ]
+  },
+  "rollout_do_wrapper_t2": {
+    "mse": 0.027383865788578987,
+    "mse_final_step": 0.030830370262265205,
+    "mse_per_step": [
+      0.016164099797606468,
+      0.03515712916851044,
+      0.030830370262265205
+    ]
+  },
+  "consequence_native_t1": {
+    "goal_rate": 0.7066666666666667,
+    "goal_rate_of_reachable": 0.9422222222222222,
+    "safety_violation_rate": 0.21666666666666667,
+    "appropriate_deferral_rate": 0.25333333333333335,
+    "inappropriate_deferral_rate": 0.0044444444444444444,
+    "n_episodes": 300,
+    "goal_ceiling": 0.75
+  },
+  "consequence_do_wrapper_t1": {
+    "goal_rate": 0.7233333333333334,
+    "goal_rate_of_reachable": 0.9644444444444444,
+    "safety_violation_rate": 0.2,
+    "appropriate_deferral_rate": 0.26666666666666666,
+    "inappropriate_deferral_rate": 0.0044444444444444444,
+    "n_episodes": 300,
+    "goal_ceiling": 0.75
+  },
+  "consequence_native_t2": {
+    "goal_rate": 0.68,
+    "goal_rate_of_reachable": 0.9066666666666666,
+    "safety_violation_rate": 0.21333333333333335,
+    "appropriate_deferral_rate": 0.26666666666666666,
+    "inappropriate_deferral_rate": 0.008888888888888889,
+    "n_episodes": 300,
+    "goal_ceiling": 0.75
+  },
+  "consequence_do_wrapper_t2": {
+    "goal_rate": 0.7233333333333334,
+    "goal_rate_of_reachable": 0.9644444444444444,
+    "safety_violation_rate": 0.16,
+    "appropriate_deferral_rate": 0.41333333333333333,
+    "inappropriate_deferral_rate": 0.0,
+    "n_episodes": 300,
+    "goal_ceiling": 0.75
+  }
+}

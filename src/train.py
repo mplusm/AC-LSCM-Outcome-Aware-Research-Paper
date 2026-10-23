@@ -61,6 +61,31 @@ def make_loader(data: dict, batch_size: int, shuffle: bool) -> DataLoader:
 
 
 # ---------------------------------------------------------------------------
+# Counterfactual supervision
+# ---------------------------------------------------------------------------
+
+def cf_target(cfg) -> str:
+    """'latent_gt': AC-LSCM only, supervised with ground-truth counterfactual
+    latents (first version). 'obs': every model is supervised with the observed
+    counterfactual outcome x_tp1_cf, so all models receive the same data."""
+    return cfg["training"].get("cf_target", "latent_gt")
+
+
+def cf_terms(model, out, x_t, a_t, x_tp1, x_tp1_cf, a_t_cf, z_tp1_cf_gt, cfg, beta_4):
+    """(prediction, target, factual) for the counterfactual loss term, or Nones."""
+    if beta_4 <= 0.0:
+        return None, None, None
+    if cf_target(cfg) == "obs":
+        x_cf_pred, _ = model.counterfactual(x_t, a_t, x_tp1, a_t_cf)
+        return x_cf_pred, x_tp1_cf, out["x_tp1_recon"]
+    if isinstance(model, ACLSCM):
+        _, z_cf_pred = model.counterfactual(x_t, a_t, x_tp1, a_t_cf)
+        # ground-truth latent, no encoder noise
+        return z_cf_pred, z_tp1_cf_gt, out["z_tp1_pred"]
+    return None, None, None
+
+
+# ---------------------------------------------------------------------------
 # One epoch
 # ---------------------------------------------------------------------------
 
@@ -95,14 +120,8 @@ def train_epoch(model, loader, optimizer, device, cfg, model_cfg, epoch: int = 0
             except Exception:
                 pass
 
-        # Counterfactual latent predictions (ACLSCM only)
-        # Use ground-truth z_tp1_cf from SCM as supervision target (not encoded x_tp1_cf)
-        z_tp1_cf_pred, z_tp1_cf_true, z_tp1_factual = None, None, None
-        if isinstance(model, ACLSCM) and beta_4 > 0.0:
-            _, z_cf_pred = model.counterfactual(x_t, a_t, x_tp1, a_t_cf)
-            z_tp1_cf_pred = z_cf_pred
-            z_tp1_cf_true = z_tp1_cf_gt  # ground-truth latent, no encoder noise
-            z_tp1_factual = out["z_tp1_pred"]
+        z_tp1_cf_pred, z_tp1_cf_true, z_tp1_factual = cf_terms(
+            model, out, x_t, a_t, x_tp1, x_tp1_cf, a_t_cf, z_tp1_cf_gt, cfg, beta_4)
 
         losses = composite_loss(
             x_tp1=x_tp1,
@@ -121,7 +140,7 @@ def train_epoch(model, loader, optimizer, device, cfg, model_cfg, epoch: int = 0
             beta_4=beta_4,
             acyclicity=acyclicity,
             lambda1=cfg["training"].get("lambda_1", 0.1),
-            use_hinge=model_cfg.get("use_hinge", True),
+            use_hinge=model_cfg.get("use_hinge", True) and cf_target(cfg) == "latent_gt",
         )
 
         losses["total"].backward()
@@ -161,12 +180,8 @@ def val_epoch(model, loader, device, cfg, model_cfg) -> dict:
             except Exception:
                 pass
 
-        z_tp1_cf_pred, z_tp1_cf_true, z_tp1_factual = None, None, None
-        if isinstance(model, ACLSCM) and beta_4 > 0.0:
-            _, z_cf_pred = model.counterfactual(x_t, a_t, x_tp1, a_t_cf)
-            z_tp1_cf_pred = z_cf_pred
-            z_tp1_cf_true = z_tp1_cf_gt  # ground-truth latent
-            z_tp1_factual = out["z_tp1_pred"]
+        z_tp1_cf_pred, z_tp1_cf_true, z_tp1_factual = cf_terms(
+            model, out, x_t, a_t, x_tp1, x_tp1_cf, a_t_cf, z_tp1_cf_gt, cfg, beta_4)
 
         losses = composite_loss(
             x_tp1=x_tp1,
@@ -185,7 +200,7 @@ def val_epoch(model, loader, device, cfg, model_cfg) -> dict:
             beta_4=beta_4,
             acyclicity=acyclicity,
             lambda1=cfg["training"].get("lambda_1", 0.1),
-            use_hinge=model_cfg.get("use_hinge", True),
+            use_hinge=model_cfg.get("use_hinge", True) and cf_target(cfg) == "latent_gt",
         )
 
         for k in totals:
@@ -277,7 +292,9 @@ def train_model(
                        init_logit=model_cfg.get("init_logit", 0.0),
                        exact_abduction=model_cfg.get("exact_abduction", False),
                        hard_gumbel=model_cfg.get("hard_gumbel", False),
-                       fixed_adjacency=model_cfg.get("fixed_adjacency"))
+                       fixed_adjacency=model_cfg.get("fixed_adjacency"),
+                       identity_obs=model_cfg.get("identity_obs", False),
+                       hard_do=model_cfg.get("hard_do", False))
     else:
         model = get_model(model_name, K=K, obs_dim=obs_dim)
     model = model.to(device)
@@ -366,7 +383,8 @@ def train_model(
     metrics["epochs_run"] = len(epoch_log)
 
     # Agent-task evaluation (all models, but meaningful for ACLSCM + SmallTransformer)
-    if not smoke_test and model_name in ("aclscm", "small_transformer"):
+    if (not smoke_test and model_name in ("aclscm", "small_transformer")
+            and cfg["training"].get("v1_agent_eval", True)):
         try:
             agent_metrics = run_agent_episodes(model, scm, K, n_episodes=100,
                                                device=device, rng_seed=seed)

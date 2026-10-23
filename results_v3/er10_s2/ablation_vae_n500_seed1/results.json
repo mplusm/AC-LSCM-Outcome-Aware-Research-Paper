@@ -1,0 +1,9 @@
+{
+  "intervention_mse": 0.06135881692171097,
+  "counterfactual_mse": 0.07101330533623695,
+  "run_name": "ablation_vae_n500_seed1",
+  "model": "vanilla_vae",
+  "config": "er10_s2",
+  "seed": 1,
+  "epochs_run": 200
+}

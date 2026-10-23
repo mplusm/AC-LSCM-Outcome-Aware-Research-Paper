@@ -1,0 +1,9 @@
+{
+  "intervention_mse": 0.04102305695414543,
+  "counterfactual_mse": 0.04317375458776951,
+  "run_name": "ablation_dreamer_n500_seed0",
+  "model": "dreamer_style",
+  "config": "er10_s0",
+  "seed": 0,
+  "epochs_run": 200
+}

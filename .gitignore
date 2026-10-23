@@ -12,3 +12,5 @@ build/
 .env
 *.pt
 results_v2/**/train.log
+results_v3/**/train.log
+results_v3/**/stdout.log

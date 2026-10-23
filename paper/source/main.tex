@@ -13,8 +13,6 @@
 \usepackage{xcolor}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
-\usepackage{tikz}
-\usetikzlibrary{arrows.meta,positioning,fit,calc}
 \usepackage[numbers,sort&compress]{natbib}
 \usepackage[hidelinks]{hyperref}
 \usepackage{microtype}
@@ -27,7 +25,8 @@
 % \input is not expandable inside tabular; use the TeX primitive for row files
 \makeatletter\newcommand{\inputrows}[1]{\@@input #1 }\makeatother
 
-\title{Outcome-Aware Agents:\\ From Token Prediction to\\ Action Consequence Modeling}
+\title{Outcome-Aware Agents:\\ When Does Causal Structure Help a Forward Model\\
+Foresee the Consequences of Actions?}
 \author{Mallesh Madapathi\\[2pt]
   \small ThinkingDBx Pvt.\ Ltd., Hyderabad, India\\
   \small \texttt{mallesh@thinkingdbx.com}}
@@ -37,378 +36,252 @@
 \maketitle
 
 \begin{abstract}
-Large language models are increasingly deployed as agents that execute code,
-modify databases, and operate production systems, yet their training
-objective contains no explicit signal about what their actions do. We argue
-that agents need an internal forward model that predicts the consequences of
-a candidate action before it is executed, and we study one such mechanism, the
-Action-Conditioned Latent Structural Causal Model (AC-LSCM): latent factors
-with per-factor mechanisms over a learned sparse graph, actions applied as
-do-interventions, and a planner that rejects candidates whose simulated
-multi-step outcome is unsafe. This version corrects an earlier one. We show
-that the originally specified model learned an empty causal graph in every
-run, and that the agent task behind its headline result (36$\times$ fewer
-safety violations than a Transformer) tests only the direct effect of an
-action and placed unsafe values outside the training range; the Transformer's
-violations there drop from 15.6\% to 2.0\% when the values are moved in range,
-and we withdraw that claim. A simplified AC-LSCM, without the acyclicity term
-(unnecessary for lagged dynamics) and the contrastive hinge, with exact
-abduction and a straight-through graph mask, has the lowest one-step and
-counterfactual prediction error of all models on five synthetic graphs. On a
-new consequence task in which safety depends on downstream effects, it
-matches a noise-free oracle (4.7\% violations versus 7.3\% for the best
-baseline) when its graph keeps all true edges, but only with ground-truth
-counterfactual supervision; without that privileged signal it is on par with
-the best baseline (6.9\%). Pruning a single weak edge into the safety factor
-raises violations to 8.4\%, and the do-operator itself has no measurable
-effect. We report all of these results, including the negative ones, and
-release code and per-seed results.
+Agents that act on real systems should predict what their actions will cause
+before acting. We study when causal structure helps a learned forward model do
+this, using a planner that rejects candidate actions whose simulated
+multi-step outcome is unsafe, in synthetic structural causal models where the
+true consequences are known. We compare the Action-Conditioned Latent
+Structural Causal Model (AC-LSCM: per-factor mechanisms over a learned sparse
+graph, actions as do-interventions) with three unstructured forward models on
+seven random graphs with 10 or 20 variables, a task configured by a fixed
+rule, and two controls: a do-wrapper that gives every model the same action
+semantics, and counterfactual data given to all models or to none. When its
+factors are the observed variables, AC-LSCM recovers the true graph exactly
+on every 10-variable graph and has lower three-step prediction error than
+every baseline in all 396 paired comparisons. Its excess safety violations
+over an oracle are 0.25 of the no-model level on 10-variable graphs (best
+baseline 0.31) and 0.41 on 20-variable graphs (0.53), and its margin is
+largest for two-variable actions never seen in training (0.18 versus 0.28).
+With learned latent factors the same model is worse than the baselines; the
+choice of factors matters more than the explicit do-operator or
+counterfactual data, and every planner stays far from the oracle. This
+version corrects an earlier one, whose model learned an empty graph and whose
+headline 36$\times$ safety improvement came from a task that tested only
+extrapolation of action values; we withdraw that claim. Code and all
+per-seed results are released.
 \end{abstract}
 
-\noindent\textbf{Keywords:} LLM agents, world models, causal representation
-learning, structural causal models, safe action selection, counterfactuals.
+\noindent\textbf{Keywords:} agents, world models, structural causal models,
+causal dynamics, safe action selection, counterfactuals.
 
 
-\section{Introduction: Agents That Do Not Know What They Are Doing}
+\section{Introduction}
 
 Consider a code agent that generates and executes a database migration. The
-migration is syntactically valid, follows recognizable patterns from training
-data, and matches the user's intent as stated in natural language. It also
-silently drops a foreign key constraint that downstream services depend on.
-The model did not predict this consequence, because nothing in how it was
-trained asked it to predict consequences. It was trained to predict tokens.
+migration is syntactically valid, matches the user's request, and silently
+drops a foreign-key constraint that downstream services depend on. The harm is
+not in the action itself but in what it causes one or two steps later. An
+agent that is to avoid such outcomes needs a \emph{forward model}: something
+that predicts, before execution, the state a candidate action will lead to,
+including its indirect effects, so that the action can be rejected or the
+decision deferred.
 
-This failure pattern matters more as large language models (LLMs) are wired
-into agent frameworks (tool-using assistants, autonomous coders, browser
-agents, data engineering copilots) that take actions which change real
-systems. The pre-training objective remains $P(w_t \mid w_{<t})$, and
-nothing in that objective directly rewards an accurate model of what happens
-after an action is taken.
+Language-model agents mostly lack such a model. Their training objective is
+next-token prediction, and current models perform poorly on formal
+interventional and counterfactual queries~\citep{jin2023cladder,chen2025counterbench}.
+Recent agents obtain a forward model by prompting the language model to
+simulate outcomes~\citep{hao2023rap,gu2024webdreamer,ruan2024toolemu}. A
+natural alternative, long studied in model-based reinforcement learning, is a
+learned world model~\citep{ha2018world,hafner2019planet,hafner2023dreamerv3}.
+Causal reasoning suggests a specific inductive bias for such a model: a state
+made of variables, one mechanism per variable over a sparse set of causes,
+and actions that replace mechanisms rather than enter as generic
+inputs~\citep{pearl2009causality,scholkopf2021causal}. Whether that bias
+actually makes an agent safer, and which part of it matters, is an empirical
+question, and it is the question of this paper.
 
-The thesis of this paper is that an AI system that takes actions should be
-able to predict, in advance, what those actions will cause, and should use
-that prediction to filter, rank, or reject candidate actions before execution.
-In other words, agents need an explicit internal \emph{forward model} of action
-consequences, coupled to the action-selection rule.
+We study it where the answer can be checked: synthetic structural causal
+models (SCMs) with known graphs, mechanisms, and noise, so that the realized
+consequence of every candidate action is available. A planner simulates each
+candidate with a learned forward model, discards candidates whose predicted
+trajectory violates a safety predicate on a variable downstream of the
+intervened one, and defers if none remain. We compare the Action-Conditioned
+Latent Structural Causal Model (AC-LSCM) with three unstructured forward
+models under the same planner.
 
-We study one such mechanism, the Action-Conditioned Latent Structural Causal
-Model (AC-LSCM), together with a planning loop that uses it for outcome-aware
-action selection. AC-LSCM draws on three established lines of work:
-action-conditioned latent world models~\citep{ha2018world,hafner2019planet,hafner2023dreamerv3},
-causal representation learning~\citep{scholkopf2021causal,lippe2022citris,lachapelle2022disentanglement},
-and sparse graph learning over latent dynamics~\citep{zheng2018notears,bello2022dagma,wang2022cdl}.
-It represents the world state as a small set of latent factors whose
-transitions follow a learned sparse graph, and implements actions as
-structural interventions in the sense of Pearl's do-operator~\citep{pearl2009causality}.
-
-\paragraph{What this version reports.}
+\paragraph{What changed from the first version.}
 An earlier version of this work~\citep{madapathi2026zenodo} reported that
-AC-LSCM reduced safety violations roughly $36\times$ relative to a Transformer
-baseline on an agent planning task. Re-examining that result, we found two
-problems that change its interpretation, and this version reports them
-together with corrected experiments:
-\begin{enumerate}
-  \item In every run of the originally specified model, the learned causal
-        graph was \emph{empty}: the sparsity and acyclicity penalties drove
-        every edge off, so at evaluation time the transition model ignored
-        the current state entirely (Section~\ref{sec:diagnosis}).
-  \item The original agent task only tested the \emph{direct} effect of an
-        action on the factor it sets, and placed the unsafe action values
-        outside the range seen in training. A state-blind model solves it,
-        and the baseline's failures there are failures of extrapolation, not
-        of causal reasoning (Section~\ref{sec:direct}).
-\end{enumerate}
+AC-LSCM reduced safety violations $36\times$ relative to a Transformer. That
+result does not hold. The model as specified there learned an empty causal
+graph in every run, and the agent task only tested whether a model knows that
+$\doop(z^i = v)$ sets $z^i$ to $v$, with unsafe values outside the training
+range; the Transformer's failures there were failures to extrapolate.
+Section~\ref{sec:v1} documents both problems and we withdraw the claim. The
+study reported here replaces the first version's experiments.
 
 \paragraph{Contributions.}
-(1) An architecture and planning loop for outcome-aware action selection, in
-which actions enter the forward model as interventions and candidate actions
-are filtered on simulated multi-step outcomes.
-(2) A diagnosis of why the originally specified model failed to learn
-structure, and a simplified AC-LSCM that removes the components the ablations
-identified as harmful, drops an acyclicity constraint that is unnecessary for
-lagged dynamics, and uses exact abduction and a straight-through graph mask.
-(3) A \emph{consequence task} in which safety and goal are defined on factors
-downstream of the intervened one and judged on the realized multi-step outcome
-of the ground-truth system, so that a forward model must propagate an
-intervention through the causal graph.
-(4) Experiments on synthetic structural causal models comparing AC-LSCM with
-three forward-model baselines under one shared planner. The simplified model
-has the lowest one-step and counterfactual error on all graphs and matches an
-oracle planner when its graph keeps every true edge; without privileged
-counterfactual supervision it is on par with the best baseline, and the
-do-operator itself has no measurable effect. We report these negative results
-in full.
+\begin{enumerate}
+\item \emph{A controlled protocol for consequence-aware planning.} Seven
+random SCMs with 10 or 20 variables; a consequence task whose safety and goal
+variables and thresholds are chosen by a fixed rule; an oracle and a no-model
+reference per environment, used to normalize violation rates; actions on two
+variables at once, which never occur in training; a \emph{do-wrapper} that
+gives every forward model the same, correct action semantics, so that the
+effect of how a model represents actions can be separated from the quality
+of its dynamics; and counterfactual training data given either to every
+model or to none (Section~\ref{sec:setup}).
+\item \emph{A positive result for causal structure over the right
+variables.} With the observed variables as its factors, AC-LSCM recovers the
+true graph exactly on all five 10-variable graphs, has lower three-step
+prediction error than every baseline in all 396 paired comparisons, and has
+the lowest normalized safety violations of all planners, with the largest
+margins on 20-variable graphs and on unseen two-variable actions
+(Section~\ref{sec:main}).
+\item \emph{Negative and null results that locate the benefit.} With learned
+latent factors the same architecture is worse than the baselines, because an
+intervention on a latent coordinate does not correspond to the intended
+intervention on the observed variable. Given correct action semantics, an
+explicit do-operator adds little; sparsity helps on 20-variable graphs;
+counterfactual training data helps the factored model only on 20-variable
+graphs and the baselines not at all; and every planner remains well short of
+the oracle (Sections~\ref{sec:latent}--\ref{sec:ablations}).
+\item \emph{A correction of the first version} (Section~\ref{sec:v1}).
+\end{enumerate}
 
 \paragraph{Scope.}
-All experiments use synthetic structural causal models with up to 20 factors.
-We do not evaluate on language benchmarks or LLM-scale models.
+All environments are synthetic and low-dimensional, with lagged
+additive-noise mechanisms and observations that are a noisy copy of the
+state. We do not evaluate language models or text-based tasks.
 Section~\ref{sec:limitations} states what the evidence does and does not
 establish.
 
-\section{The Agent Problem with Token Prediction}
+\section{Background: Interventions and Forward Models}
+\label{sec:background}
 
-\subsection{Why next-token training is not an action model}
-An autoregressive language model is trained to maximize
-$\log P(w_t \mid w_{<t})$ over a corpus. When such a model is deployed as an
-agent, an action $a_t$ is another token sequence sampled from this
-distribution. Nothing in the objective requires an explicit representation of
-the world state the action will modify, or of the state that will result.
+Pearl~\citep{pearl2009causality} distinguishes association, $P(y \mid x)$;
+intervention, $P(y \mid \doop(x))$, the distribution when $x$ is set by an
+external agent; and counterfactuals, $P(y_x \mid x', y')$, what would have
+happened in a specific realized case under a different action. A forward
+model for planning has to answer interventional queries: if I take this
+action in this state, what will the state be over the next few steps?
 
-This is often sufficient when both the action and its consequences are well
-represented in training data and the consequences are themselves textual. It
-is insufficient in three situations that are common in agent deployments:
-when the action changes a system outside the text stream (a filesystem, a
-database, a browser DOM, a physical actuator); when the training corpus does
-not contain the specific configuration the agent is acting on; and when the
-right action depends on the resulting state rather than on surface similarity
-to training contexts. The resulting failures are not hallucinations in the
-usual sense. They are actions taken without a model of their outcome.
+Two remarks frame what causal structure can add. First, when the agent
+conditions on its own action and on the full state, and nothing unobserved
+drives both the action and the outcome, the conditional and interventional
+distributions coincide. A generic action-conditioned model trained on
+logged interactions can therefore learn the right interventional
+distribution without any causal machinery, given enough data that covers the
+relevant actions and states. Second, what a structural model adds is
+\emph{modularity}. If each variable has its own mechanism over a small set of
+causes, and an action replaces exactly the mechanism of the variable it
+targets, then the effect of a new combination of interventions can be
+predicted by composing mechanisms that were each learned from other data.
+This predicts that structure should help most where data are scarce relative
+to the size of the system and where the agent considers actions unlike those
+in its training data. The experiments test these predictions.
 
-\subsection{Concrete failure modes}
-Illustrative examples include code agents that emit destructive shell
-commands when a task superficially resembles a cleanup, SQL agents that
-propose joins matching familiar templates but producing wrong results on the
-actual schema, browser agents that submit a plausible-looking form on the
-wrong account, and pipeline agents that recommend transformations whose effect
-on downstream consumers they never represented. Benchmarks that emulate tool
-execution to expose such risks~\citep{ruan2024toolemu} document that these
-failures are frequent in current LM agents. In each case the agent selected an
-action by pattern-matching rather than by consulting a model of what the
-action would do to the current system state.
-
-\subsection{What an outcome-aware agent needs}
-An agent that anticipates the consequences of its actions needs four
-components: a compact representation $\z_t$ of the current state; a
-transition model $p(\z_{t+1} \mid \z_t, a_t)$ that predicts the next state
-given an action; predicates and a value function that score predicted
-outcomes against goals and constraints; and a selection rule that uses
-simulated outcomes to choose, defer, or reject candidate actions. Planning
-with learned models~\citep{hafner2019planet,schrittwieser2020muzero},
-shielding in safe reinforcement learning~\citep{alshiekh2018shielding}, and
-recent world-model-based LLM agents~\citep{hao2023rap,gu2024webdreamer} all
-instantiate parts of this recipe. The question we study is how the
-transition model should be structured so that it captures the
-\emph{consequences} of interventions, including indirect ones, rather than
-correlations between action tokens and successor tokens.
-
-\section{Pearl's Hierarchy as a Diagnostic}
-
-Pearl~\citep{pearl2009causality} distinguishes three levels of reasoning.
-Association, $P(y \mid x)$, concerns what is observed to co-occur.
-Intervention, $P(y \mid \doop(x))$, concerns what happens when a variable is
-set by an external agent. Counterfactuals, $P(y_x \mid x', y')$, concern what
-would have happened in a specific realized case under a different action.
-
-For an agent, the relevant distinction is between ``users who run command $X$
-tend to be in situation $Y$ afterward'' (association) and ``if I run command
-$X$, the system will be in situation $Y$ afterward'' (intervention). Two
-caveats keep this distinction honest. First, when an agent conditions on its
-own action and the full state, and nothing unobserved influences both the
-action choice and the outcome, the conditional and interventional
-distributions coincide; an action-conditioned model trained on such data can
-in principle learn $P(\cdot \mid \doop(a))$ without special machinery.
-Second, LLMs trained or fine-tuned on interaction data are not restricted to
-the associational level. Benchmarks such as CLadder~\citep{jin2023cladder}
-and CounterBench~\citep{chen2025counterbench} nonetheless show that current
-LLMs perform poorly on formal interventional and counterfactual queries.
-
-What structural interventional semantics adds is \emph{modularity}: if each
-factor has its own mechanism and an action replaces exactly the mechanism of
-the factor it targets, then the effect of an intervention on one factor can be
-propagated to its descendants through mechanisms that were learned from other
-data. Whether this inductive bias helps in practice is the empirical question
-this paper addresses. Table~\ref{tab:paradigms} summarizes the contrast.
-
-\begin{table}[t]
-\centering
-\small
-\begin{tabular}{@{}L{2.6cm}L{5.2cm}L{5.6cm}@{}}
-\toprule
-Dimension & Token-prediction agent & Outcome-aware agent (AC-LSCM) \\
-\midrule
-What it models & Token distributions in context & State transitions under actions \\
-Action handling & Action tokens emitted from context & Structural intervention on the state model \\
-Causal level & Association (by default) & Intervention and counterfactual \\
-Failure mode & Plausible action, wrong outcome & Action rejected if its simulated outcome is unacceptable \\
-\bottomrule
-\end{tabular}
-\caption{Two agent paradigms.}
-\label{tab:paradigms}
-\end{table}
-
-\section{The AC-LSCM Architecture}
+\section{AC-LSCM and the Planner}
 \label{sec:arch}
 
-\subsection{State representation}
-The world state is represented as $K$ latent factors,
-\begin{equation}
-  \z_t = (z_t^1, z_t^2, \dots, z_t^K), \qquad z_t^i \in \mathbb{R}^{d_i},
-\end{equation}
-each intended to track one mechanism of the environment. In our experiments
-$d_i = 1$. Identifiability of such factors is not guaranteed in general
-(Section~\ref{sec:limitations}); in our setting each action targets a known
-factor index, which anchors the latent coordinates to the intervention
-targets, as in work on causal representation learning from interventions~\citep{lippe2022citris,brehmer2022weakly}.
-
 \subsection{Structural transitions}
-Transitions are governed by per-factor structural equations parameterized by
-neural networks $f_i$:
+The state is a vector of $K$ factors $\z_t = (z_t^1, \dots, z_t^K)$ with
+scalar $z_t^i$. Each factor has its own mechanism, a small neural network
+$f_i$:
 \begin{equation}
-  z_{t+1}^i := f_i\big(\Pa(z^i)_t,\ a_t^i\big) + \epsilon_t^i,
+  z_{t+1}^i := f_i\big(A_{i,:} \odot \z_t\big) + \epsilon_t^i,
   \qquad i \in \{1,\dots,K\},
   \label{eq:sem}
 \end{equation}
-where $\Pa(z^i)_t \subseteq \z_t$ is the parent set of factor $i$ under a
-learned adjacency matrix $A \in \{0,1\}^{K\times K}$, $a_t^i$ is the
-component of the action that targets factor $i$ (null if the action does not
-touch it), and $\epsilon_t^i$ is exogenous noise. Parents are taken at time
-$t$ and children at $t+1$, so the unrolled graph is acyclic for any $A$.
-An acyclicity constraint on $A$ is therefore only needed if one also allows
-instantaneous (same-step) edges; we return to this point in
-Section~\ref{sec:diagnosis}. The adjacency is parameterized by logits
-$\Theta$, sampled with a Gumbel-sigmoid relaxation during training, and
-thresholded at $\sigma(\Theta) > 0.5$ at evaluation. In the original model the
-training-time sample is soft, so the masked parent value $\tilde A_{ij} z^j_t$
-can be rescaled by $f_i$; in the simplified model it is a hard sample with a
-straight-through gradient, so training and evaluation use the same binary
-graph.
+where $A \in \{0,1\}^{K\times K}$ is a learned adjacency matrix ($A_{ij} = 1$
+if $z^j_t$ is a parent of $z^i_{t+1}$) and $\epsilon_t^i$ is exogenous noise.
+Parents are taken at time $t$ and children at $t+1$, so the unrolled graph is
+acyclic for every $A$ and no acyclicity constraint is needed. $A$ is
+parameterized by logits $\Theta$ initialized at $+2$ (a dense graph). During
+training we sample $A$ with a hard Gumbel-sigmoid and a straight-through
+gradient, so that training and evaluation use the same kind of binary mask;
+at evaluation $A_{ij} = \mathbf{1}[\sigma(\Theta_{ij}) > 0.5]$.
 
-\subsection{Action as intervention, not concatenation}
-When $a_t^i$ is non-null, the transition for factor $i$ does not receive its
-parents: the natural causes are severed and the intervention value is
-substituted, $z_{t+1}^i := f_i(\varnothing, a_t^i)$, with the network expected
-to learn $f_i(\varnothing, v) \approx v$. This is the do-operator made
-explicit in the computation graph. A generic sequence model instead
-concatenates an action embedding to its input and must learn from data which
-inputs to ignore.
+\paragraph{Actions as interventions.}
+An action $a_t$ sets a subset of factors to given values. Under the
+\emph{hard do-operator}, an intervened factor takes its value exactly,
+$z_{t+1}^i := a_t^i$, and its mechanism is not evaluated; all other factors
+follow Equation~\eqref{eq:sem}. The intervention reaches other factors only
+through the graph, from the next step on. A \emph{soft} variant, used in the
+first version, instead passes $a_t^i$ to $f_i$ with the parents masked out
+and relies on $f_i$ learning to output it.
 
-\subsection{Trainable modules}
-An encoder $q_\phi(\z_t \mid \x_t)$ maps observations to latent factors; a
-decoder $p_\theta(\x_t \mid \z_t)$ reconstructs observations; and the
-transition operator $p_\psi(\z_{t+1} \mid \z_t, \doop(a_t))$ implements
-Equation~\eqref{eq:sem} with mean given by the $f_i$ and unit variance. The
-adjacency logits $\Theta$ are learned jointly.
+\subsection{Two choices of factors}
+\emph{Latent AC-LSCM.} An encoder maps the observation $\x_t$ to latent
+factors $\z_t$ and a decoder maps them back, as in latent world
+models~\citep{hafner2019planet}. An action on observed variable $i$ is
+applied to latent factor $i$. Nothing forces latent factor $i$ to be observed
+variable $i$, so this relies on training to align them.
 
-\section{Training Objective}
-\label{sec:objective}
+\emph{Factored AC-LSCM.} The factors are the observed variables themselves,
+$\z_t = \x_t$, with no encoder or decoder. This is the natural choice when the
+agent observes the variables its actions and predicates refer to, as in our
+environments and in many structured agent settings (fields of a database,
+service health metrics, configuration values), and it is the setting of work
+on causal dynamics models in reinforcement learning~\citep{wang2022cdl,pitis2020coda}.
 
-The full objective as originally specified is
+\subsection{Training objective}
+Both variants minimize
 \begin{equation}
-  \mathcal{L} = \beta_1\mathcal{L}_{\text{recon}} + \beta_2\mathcal{L}_{\text{trans}}
-  + \beta_3\mathcal{L}_{\text{graph}} + \beta_4\mathcal{L}_{\text{cf}}.
+  \mathcal{L} = \big\|\x_{t+1} - \hat\x_{t+1}\big\|_2^2
+  + \mathcal{L}_{\text{trans}} + \tfrac12 \lambda_1 \|A\|_1
+  + \beta_{\text{cf}}\, \mathcal{L}_{\text{cf}},
 \end{equation}
-The reconstruction loss anchors the latent prediction to the next observation,
-\begin{equation}
-  \mathcal{L}_{\text{recon}} = \big\| \x_{t+1} - \hat\x_{t+1} \big\|_2^2,
-  \qquad \hat\x_{t+1} = \mathrm{dec}_\theta\big(\bar f(\mathrm{enc}_\phi(\x_t), \doop(a_t))\big),
-\end{equation}
-where $\bar f$ stacks the $f_i$. The transition loss matches the predicted
-next state to the encoder posterior of the observed next state,
-\begin{equation}
-  \mathcal{L}_{\text{trans}} = \mathbb{E}\Big[ D_{\mathrm{KL}}\big( q_\phi(\z_{t+1} \mid \x_{t+1})
-  \,\big\|\, p_\psi(\z_{t+1} \mid \z_t, \doop(a_t)) \big)\Big].
-\end{equation}
-The graph loss combines sparsity with the NOTEARS acyclicity
-function~\citep{zheng2018notears},
-\begin{equation}
-  \mathcal{L}_{\text{graph}} = \lambda_1 \|\tilde A\|_1
-  + \lambda_2 \big(\operatorname{tr}(e^{\tilde A \odot \tilde A}) - K\big),
-  \label{eq:graph}
-\end{equation}
-where $\tilde A$ is the relaxed adjacency. The DAGMA log-determinant
-function~\citep{bello2022dagma} is an alternative for the second term. The
-counterfactual loss uses ground-truth counterfactual latents
-$\z^{\mathrm{cf}}_{t+1}$, available in simulation:
-\begin{equation}
-  \mathcal{L}_{\text{cf}} = \big\| \tilde\z_{t+1} - \z^{\mathrm{cf}}_{t+1} \big\|_2^2
-  + \max\big(0,\ \gamma - \|\tilde\z_{t+1} - \hat\z_{t+1}\|_2^2\big),
-  \label{eq:cf}
-\end{equation}
-where $\tilde\z_{t+1}$ is the model's counterfactual prediction under an
-alternative action $\tilde a_t$ (Section~\ref{sec:cf}) and $\hat\z_{t+1}$ is
-its factual prediction. The hinge term was intended to keep factual and
-counterfactual predictions from collapsing together.
+where $\hat\x_{t+1}$ is the decoded one-step prediction under the logged
+action, $\mathcal{L}_{\text{trans}}$ is the Gaussian KL term between the
+encoder posterior of $\x_{t+1}$ and the predicted next latent (for the
+factored model it reduces to a squared error), and $\lambda_1 = 0.01$
+(the \emph{dense} variants use $\lambda_1 = 0$). The weight of the sparsity
+term is ramped up over the first 50 epochs.
 
-\paragraph{Simplified AC-LSCM.}
-The ablations of the original model (Section~\ref{sec:diagnosis}) and the
-lagged-graph argument above lead to a simplified objective, which is the
-configuration we recommend: (i) drop the acyclicity term ($\lambda_2 = 0$),
-since the lagged graph is acyclic by construction; (ii) reduce the sparsity
-weight from $\lambda_1 = 0.1$ to $\lambda_1 = 0.01$ and initialize the
-adjacency logits at $+2$ (dense) instead of $0$, so that edges are pruned
-from a dense graph rather than having to be switched on against a penalty;
-(iii) remove the hinge term in Equation~\eqref{eq:cf}; (iv) use exact
-abduction (Section~\ref{sec:cf}); and (v) sample the adjacency with a hard
-straight-through Gumbel-sigmoid during training. Everything else, including
-all network sizes and optimization settings, is unchanged. Changes (i)--(iv)
-follow from the first-version ablations and the lagged-graph argument and
-were fixed after a single 30-epoch pilot run; change (v)
-was added after the first full runs of (i)--(iv), described in
-Section~\ref{sec:ablations}, and was selected on held-out prediction error,
-not on agent-task performance.
+The counterfactual term $\mathcal{L}_{\text{cf}}$ uses training transitions
+paired with the outcome under a different action and the same noise. The
+model predicts the counterfactual by abduction, intervention, and prediction:
+it recovers the noise as the residual
+$\hat\epsilon_t = \mathrm{enc}(\x_{t+1}) - \bar f(\mathrm{enc}(\x_t), \doop(a_t))$,
+applies the alternative action $\tilde a_t$, and adds the recovered noise back
+to every factor that neither action intervenes on. We consider three regimes:
+\emph{none} ($\beta_{\text{cf}} = 0$, the default); \emph{observed}, in which
+$\mathcal{L}_{\text{cf}}$ is the squared error against the observed
+counterfactual outcome $\tilde\x_{t+1}$, and every model in the comparison,
+including the baselines, receives the same pairs; and \emph{true latents},
+the first version's regime, in which AC-LSCM alone is supervised with the
+noise-free counterfactual state. The last regime gives AC-LSCM the true state
+coordinates and is reported only for continuity.
 
-\section{Counterfactual Inference}
-\label{sec:cf}
-
-For a query ``we observed $(\x_t, a_t, \x_{t+1})$; what would $\x_{t+1}$ have
-been under action $\tilde a_t$?'', the model follows Pearl's three steps.
-
-\emph{Abduction.} Under the additive-noise form of
-Equation~\eqref{eq:sem}, the realized noise is recovered as the residual
-\begin{equation}
-  \hat\epsilon_t = \mathrm{enc}_\phi(\x_{t+1}) - \bar f(\mathrm{enc}_\phi(\x_t), \doop(a_t)).
-\end{equation}
-\emph{Intervention.} Replace $a_t$ by $\tilde a_t$, holding the mechanisms and
-the inferred noise fixed.
-\emph{Prediction.} Roll the structural equations forward and decode:
-\begin{equation}
-  \tilde\z_{t+1} = \bar f(\mathrm{enc}_\phi(\x_t), \doop(\tilde a_t)) + m \odot \hat\epsilon_t,
-  \qquad \tilde\x_{t+1} = \mathrm{dec}_\theta(\tilde\z_{t+1}).
-\end{equation}
-In the original model $m = \mathbf{1}$. With \emph{exact abduction}, $m_i = 0$
-for every factor that is intervened on in either $a_t$ or $\tilde a_t$: an
-intervention overrides the exogenous noise of the factor it sets, so the
-residual for that factor is either meaningless (in the factual world) or must
-not be added (in the counterfactual world). Reusing the abducted noise for all
-other factors is what makes the prediction counterfactual rather than merely
-interventional.
-
-\section{The Outcome-Aware Planning Loop}
+\subsection{Outcome-aware planning}
 \label{sec:planning}
 
-Algorithm~\ref{alg:planning} shows how the forward model is used for action
-selection. For each candidate action, the model encodes the current
-observation, applies the action as an intervention, rolls the transition
-forward for $H$ steps without further actions, and decodes the predicted
-observations. Safety and goal predicates are evaluated on these decoded
-predictions, which is the one space shared by every model we compare.
-Candidates whose simulated trajectory violates the safety predicate are
-removed; if none remain, the agent defers. Among the remaining candidates the
-agent picks the one with the highest predicted value, with a bonus for
-satisfying the goal predicate.
+Algorithm~\ref{alg:planning} uses a forward model to choose among candidate
+actions. Each candidate is simulated for $H$ steps (the action at the first
+step, no action afterwards). Candidates whose predicted trajectory violates
+the safety predicate at any step are discarded; if none remain, the agent
+defers. Among the rest it picks the candidate with the highest predicted goal
+value, with a bonus for satisfying the goal predicate. Predicates are always
+evaluated on predicted \emph{observations}, the one space all models share.
 
-Safety filtering therefore happens before execution, on simulated outcomes
-rather than on the text of the action; deferral is a first-class output; and
-the difference between predicted and realized outcomes after execution is a
-training signal for the forward model.
+\paragraph{The do-wrapper.}
+For a model that treats actions as generic inputs, we also run the planner
+with a \emph{do-wrapper} that imposes the correct action semantics from
+outside: predict the next observation with no action, overwrite the
+intervened variables with their values, and continue the rollout with no
+action. Because interventions in our environments act on the next state and
+reach other variables only through the dynamics, the do-wrapper is exactly
+right for any model, and it requires knowing only which variables an action
+sets. Comparing each model with and without the do-wrapper separates errors in
+action handling from errors in the learned dynamics. For the factored
+AC-LSCM the two coincide.
 
 \begin{algorithm}[t]
 \caption{Outcome-aware action selection}
 \label{alg:planning}
 \begin{algorithmic}[1]
-\Require observation $\x_t$, candidate actions $\mathcal{A}_t$, horizon $H$,
-safety predicate $S$, goal predicate $G$, value function $V$
-\State $\z_t \gets \mathrm{enc}_\phi(\x_t)$; \quad $\mathcal{C} \gets \emptyset$
+\Require observation $\x_t$, candidates $\mathcal{A}_t$, horizon $H$,
+forward model $M$, safety predicate $S$, goal predicate $G$, goal value $V$
+\State $\mathcal{C} \gets \emptyset$
 \For{each $a \in \mathcal{A}_t$}
-  \State $\z^{(a)}_{t+1} \gets \bar f(\z_t, \doop(a))$; \quad
-         $\z^{(a)}_{t+k} \gets \bar f(\z^{(a)}_{t+k-1}, \varnothing)$ for $k = 2,\dots,H$
-  \State $\hat\x^{(a)}_{t+k} \gets \mathrm{dec}_\theta(\z^{(a)}_{t+k})$ for $k = 1,\dots,H$
-  \If{$S(\hat\x^{(a)}_{t+k})$ holds for all $k$}
+  \State $\hat\x^{(a)}_{t+1} \gets M(\x_t, a)$; \quad
+         $\hat\x^{(a)}_{t+k} \gets M(\hat\x^{(a)}_{t+k-1}, \varnothing)$ for $k = 2,\dots,H$
+  \If{$S(\hat\x^{(a)}_{t+k})$ holds for all $k \le H$}
      \State $\mathcal{C} \gets \mathcal{C} \cup \{a\}$
   \EndIf
 \EndFor
 \If{$\mathcal{C} = \emptyset$} \State \Return \textsc{Defer} \EndIf
-\State \Return $\arg\max_{a \in \mathcal{C}}\ \big[ v_a + \mathbf{1}[v_a > \tau_g] \big]$,
+\State \Return $\arg\max_{a \in \mathcal{C}}\ \big[ v_a + \mathbf{1}[G \text{ holds for some } \hat\x^{(a)}_{t+k}] \big]$,
        \ where $v_a = \max_k V(\hat\x^{(a)}_{t+k})$
 \end{algorithmic}
 \end{algorithm}

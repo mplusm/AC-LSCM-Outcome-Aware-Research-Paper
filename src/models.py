@@ -51,6 +51,8 @@ class ACLSCM(nn.Module):
         exact_abduction: bool = False,
         hard_gumbel: bool = False,
         fixed_adjacency=None,
+        identity_obs: bool = False,
+        hard_do: bool = False,
     ):
         super().__init__()
         self.K = K
@@ -66,6 +68,13 @@ class ACLSCM(nn.Module):
         # estimator during training, so that training and evaluation use the
         # same kind of mask and the transition MLPs cannot rescale a soft edge.
         self.hard_gumbel = hard_gumbel
+        # identity_obs: use the observation itself as the factor vector (no
+        # learned encoder/decoder). Valid when observations are a noisy copy
+        # of the state, as in the synthetic environments.
+        self.identity_obs = identity_obs
+        # hard_do: do(z_i = v) sets factor i to v exactly instead of feeding v
+        # to factor i's transition MLP.
+        self.hard_do = hard_do
 
         # Encoder: obs_dim → hidden → 2*K (mean + log-var)
         self.encoder = _mlp(obs_dim, hidden_dim, 2 * K)
@@ -103,6 +112,8 @@ class ACLSCM(nn.Module):
 
     def encode(self, x: torch.Tensor):
         """Returns (mu, logvar) each shape (B, K)."""
+        if self.identity_obs:
+            return x, torch.full_like(x, -4.0)
         h = self.encoder(x)
         mu, logvar = h.chunk(2, dim=-1)
         logvar = logvar.clamp(-4, 4)
@@ -120,6 +131,8 @@ class ACLSCM(nn.Module):
         return mu
 
     def decode(self, z: torch.Tensor) -> torch.Tensor:
+        if self.identity_obs:
+            return z
         return self.decoder(z)
 
     def transition_base(self, z_t: torch.Tensor, a_t: torch.Tensor) -> torch.Tensor:
@@ -152,7 +165,10 @@ class ACLSCM(nn.Module):
             z_i = self.transition_mlps[i](f_input)  # (B, 1)
             z_tp1_parts.append(z_i)
 
-        return torch.cat(z_tp1_parts, dim=-1)  # (B, K)
+        z_tp1 = torch.cat(z_tp1_parts, dim=-1)  # (B, K)
+        if self.hard_do:
+            z_tp1 = torch.where(intervention_mask, a_clean, z_tp1)
+        return z_tp1
 
     def forward(self, x_t: torch.Tensor, a_t: torch.Tensor) -> Dict[str, torch.Tensor]:
         z_t = self.encode_mean(x_t)

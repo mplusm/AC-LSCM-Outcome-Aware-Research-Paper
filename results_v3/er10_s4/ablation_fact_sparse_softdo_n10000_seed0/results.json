@@ -1,0 +1,12 @@
+{
+  "intervention_mse": 0.0309345331043005,
+  "counterfactual_mse": 0.019550997763872147,
+  "shd": 0,
+  "dag_constraint": 0.002307891845703125,
+  "abduction_recovery_error": 0.5384119749069214,
+  "run_name": "ablation_fact_sparse_softdo_n10000_seed0",
+  "model": "aclscm",
+  "config": "er10_s4",
+  "seed": 0,
+  "epochs_run": 147
+}

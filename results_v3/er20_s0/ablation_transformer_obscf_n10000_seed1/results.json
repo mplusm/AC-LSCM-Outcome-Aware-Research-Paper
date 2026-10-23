@@ -1,0 +1,9 @@
+{
+  "intervention_mse": 0.06317107938230038,
+  "counterfactual_mse": 0.06538079679012299,
+  "run_name": "ablation_transformer_obscf_n10000_seed1",
+  "model": "small_transformer",
+  "config": "er20_s0",
+  "seed": 1,
+  "epochs_run": 200
+}
